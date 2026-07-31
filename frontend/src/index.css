@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 font-sans antialiased;
+  }
+}
+
+/* Custom Print Styles for Official LPG Cash Memos and KYC Profiles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-memo, #printable-memo * {
+    visibility: visible;
+  }
+  #printable-memo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
