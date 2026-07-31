@@ -4,6 +4,8 @@ import {
   auth, 
   googleProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   firebaseSignOut, 
@@ -32,11 +34,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    // Check if returning from Google Redirect Auth
+    getRedirectResult(auth).then((result: any) => {
+      if (result?.user) {
+        const currentUser: User = {
+          id: result.user.uid,
+          name: (result.user.displayName || result.user.email?.split('@')[0] || 'GOOGLE USER').toUpperCase(),
+          email: result.user.email || '',
+          role: 'admin',
+          phone: result.user.phoneNumber || "9876543210"
+        };
+        setUser(currentUser);
+        localStorage.setItem('lpg_auth_user', JSON.stringify(currentUser));
+      }
+    }).catch((err: any) => {
+      console.warn("Google Redirect Auth result notice:", err.message);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser: any) => {
       if (firebaseUser) {
         const currentUser: User = {
           id: firebaseUser.uid,
-          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Admin User',
+          name: (firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'GOOGLE USER').toUpperCase(),
           email: firebaseUser.email || '',
           role: 'admin',
           phone: firebaseUser.phoneNumber || "9876543210"
@@ -61,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userCred = await signInWithEmailAndPassword(auth, email, password);
         const currentUser: User = {
           id: userCred.user.uid,
-          name: userCred.user.displayName || email.split('@')[0],
+          name: (userCred.user.displayName || email.split('@')[0]).toUpperCase(),
           email: email,
           role: 'admin',
           phone: "9876543210"
@@ -102,10 +121,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return currentUser;
       }
     } catch (err: any) {
-      console.error("Firebase Google Sign-In Error:", err);
-      if (err.code === 'auth/popup-closed-by-user') {
-        throw new Error("Google Sign-In popup was closed before completing.");
-      } else if (err.code === 'auth/unauthorized-domain') {
+      console.error("Firebase Google Sign-In Popup Error:", err);
+      
+      // If popup is blocked by browser, fallback smoothly to redirect method
+      if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
+        console.log("Popup blocked or closed by user, launching Google Redirect authentication...");
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      }
+      
+      if (err.code === 'auth/unauthorized-domain') {
         throw new Error("Domain not authorized in Firebase Console. Add your domain in Firebase > Authentication > Settings > Authorized Domains.");
       } else if (err.code === 'auth/operation-not-allowed' || err.code === 'auth/configuration-not-found') {
         throw new Error("Google Sign-In is not enabled in Firebase. Go to console.firebase.google.com > Authentication > Sign-in method > Enable Google.");
