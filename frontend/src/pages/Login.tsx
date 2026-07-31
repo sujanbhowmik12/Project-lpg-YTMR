@@ -63,7 +63,7 @@ export const Login: React.FC = () => {
       await loginWithGoogle();
       navigate('/');
     } catch (err: any) {
-      setError("Google authentication failed. Please try standard sign in.");
+      setError(err.message || "Google Sign-In failed. Please try again.");
     } finally {
       setGoogleLoading(false);
     }

@@ -16,7 +16,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   login: (email: string, password?: string) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
+  loginWithGoogle: () => Promise<any>;
   signup: (email: string, password: string, name: string, phone: string) => Promise<void>;
   logout: () => Promise<void>;
   switchRole: (role: UserRole) => void;
@@ -92,29 +92,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (res.user) {
         const currentUser: User = {
           id: res.user.uid,
-          name: (res.user.displayName || res.user.email?.split('@')[0] || 'GOOGLE ADMIN').toUpperCase(),
-          email: res.user.email || 'google_admin@ytmrlpg.com',
+          name: (res.user.displayName || res.user.email?.split('@')[0] || 'GOOGLE USER').toUpperCase(),
+          email: res.user.email || '',
           role: 'admin',
           phone: res.user.phoneNumber || "9876543210"
         };
         setUser(currentUser);
         localStorage.setItem('lpg_auth_user', JSON.stringify(currentUser));
-        return;
+        return currentUser;
       }
     } catch (err: any) {
-      console.warn("Google authentication popup error, using instant fallback:", err.message);
+      console.error("Firebase Google Sign-In Error:", err);
+      if (err.code === 'auth/popup-closed-by-user') {
+        throw new Error("Google Sign-In popup was closed before completing.");
+      } else if (err.code === 'auth/unauthorized-domain') {
+        throw new Error("Domain not authorized in Firebase Console. Add your domain in Firebase > Authentication > Settings > Authorized Domains.");
+      } else if (err.code === 'auth/operation-not-allowed' || err.code === 'auth/configuration-not-found') {
+        throw new Error("Google Sign-In is not enabled in Firebase. Go to console.firebase.google.com > Authentication > Sign-in method > Enable Google.");
+      } else {
+        throw new Error(err.message || "Google Sign-In failed. Please try again.");
+      }
     }
-
-    // Fallback Google Sign-In demo user
-    const googleDemoUser: User = {
-      id: "google-demo-1",
-      name: "SUJAN BHOWMIK (ADMIN)",
-      email: "sujan@ytmrlpg.com",
-      role: 'admin',
-      phone: "8207004928"
-    };
-    setUser(googleDemoUser);
-    localStorage.setItem('lpg_auth_user', JSON.stringify(googleDemoUser));
   };
 
   const signup = async (email: string, password: string, name: string, phone: string) => {
