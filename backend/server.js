@@ -142,3 +142,5 @@ app.get('/api/reports/summary', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🔥 LPG Management Server running on port ${PORT}`);
 });
+
+export default app;
