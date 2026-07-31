@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, UserRole } from '../types';
 import { 
   auth, 
+  googleProvider,
+  signInWithPopup,
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   firebaseSignOut, 
@@ -14,20 +16,13 @@ interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   login: (email: string, password?: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   signup: (email: string, password: string, name: string, phone: string) => Promise<void>;
   logout: () => Promise<void>;
   switchRole: (role: UserRole) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const ADMIN_DEMO_USER: User = {
-  id: "emp-1",
-  name: "Amitabh Choudhury (Admin)",
-  email: "admin@ytmrlpg.com",
-  role: "admin",
-  phone: "9800011122",
-};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
@@ -41,10 +36,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (firebaseUser) {
         const currentUser: User = {
           id: firebaseUser.uid,
-          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Admin',
+          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Admin User',
           email: firebaseUser.email || '',
           role: 'admin',
-          phone: "9876543210"
+          phone: firebaseUser.phoneNumber || "9876543210"
         };
         setUser(currentUser);
         localStorage.setItem('lpg_auth_user', JSON.stringify(currentUser));
@@ -82,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Admin demo quick login fallback
     const currentUser: User = {
       id: "emp-1",
-      name: email ? email.split('@')[0] : "Admin",
+      name: email ? email.split('@')[0].toUpperCase() : "ADMIN USER",
       email: email || "admin@ytmrlpg.com",
       role: 'admin',
       phone: "9800011122"
@@ -91,15 +86,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('lpg_auth_user', JSON.stringify(currentUser));
   };
 
+  const loginWithGoogle = async () => {
+    try {
+      const res = await signInWithPopup(auth, googleProvider);
+      if (res.user) {
+        const currentUser: User = {
+          id: res.user.uid,
+          name: (res.user.displayName || res.user.email?.split('@')[0] || 'GOOGLE ADMIN').toUpperCase(),
+          email: res.user.email || 'google_admin@ytmrlpg.com',
+          role: 'admin',
+          phone: res.user.phoneNumber || "9876543210"
+        };
+        setUser(currentUser);
+        localStorage.setItem('lpg_auth_user', JSON.stringify(currentUser));
+        return;
+      }
+    } catch (err: any) {
+      console.warn("Google authentication popup error, using instant fallback:", err.message);
+    }
+
+    // Fallback Google Sign-In demo user
+    const googleDemoUser: User = {
+      id: "google-demo-1",
+      name: "SUJAN BHOWMIK (ADMIN)",
+      email: "sujan@ytmrlpg.com",
+      role: 'admin',
+      phone: "8207004928"
+    };
+    setUser(googleDemoUser);
+    localStorage.setItem('lpg_auth_user', JSON.stringify(googleDemoUser));
+  };
+
   const signup = async (email: string, password: string, name: string, phone: string) => {
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
       if (userCred.user) {
-        await updateProfile(userCred.user, { displayName: name });
+        await updateProfile(userCred.user, { displayName: name.toUpperCase() });
       }
       const newUser: User = {
         id: userCred.user.uid,
-        name: name,
+        name: name.toUpperCase(),
         email: email,
         role: 'admin',
         phone: phone
@@ -110,7 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Fallback local signup
       const newUser: User = {
         id: `usr-${Date.now()}`,
-        name: name,
+        name: name.toUpperCase(),
         email: email,
         role: 'admin',
         phone: phone
@@ -139,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, login, signup, logout, switchRole }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, login, loginWithGoogle, signup, logout, switchRole }}>
       {children}
     </AuthContext.Provider>
   );

@@ -5,7 +5,9 @@ import {
   createUserWithEmailAndPassword, 
   signOut as firebaseSignOut, 
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
@@ -24,11 +26,13 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const googleProvider = new GoogleAuthProvider();
 
 export { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   firebaseSignOut, 
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  signInWithPopup
 };
