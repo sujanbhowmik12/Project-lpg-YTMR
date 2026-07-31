@@ -10,6 +10,7 @@ import {
   signInWithPopup
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getAnalytics, isSupported } from "firebase/analytics";
 
 // User's Firebase web app configuration
 const firebaseConfig = {
@@ -26,7 +27,15 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Analytics
+export const analytics = typeof window !== 'undefined' ? isSupported().then((yes: boolean) => yes ? getAnalytics(app) : null) : null;
+
+// Google Auth Provider configured to prompt account selector
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 export { 
   signInWithEmailAndPassword, 
