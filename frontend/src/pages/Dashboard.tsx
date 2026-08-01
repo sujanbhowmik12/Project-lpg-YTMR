@@ -58,11 +58,11 @@ export const Dashboard: React.FC = () => {
     { day: 'Sun', bookings: 19, revenue: 16210 },
   ];
 
-  // Pie chart data for Ujjwala vs General
+  // Pie chart data for Ujjwala vs General using user palette (Coral, Neptune, Sunbeam)
   const schemePieData = [
-    { name: 'PMUY Ujjwala', value: ujjwalaCount || 2, color: '#f97316' },
-    { name: 'General Domestic', value: generalCount || 3, color: '#0284c7' },
-    { name: 'Commercial 19kg', value: commercialCount || 1, color: '#a855f7' },
+    { name: 'PMUY Ujjwala', value: ujjwalaCount || 2, color: '#E9633E' }, // CORAL
+    { name: 'General Domestic', value: generalCount || 3, color: '#537987' }, // NEPTUNE
+    { name: 'Commercial 19kg', value: commercialCount || 1, color: '#EAAA42' }, // SUNBEAM
   ];
 
   const handleQuickBook = (customerId: string) => {
@@ -74,15 +74,15 @@ export const Dashboard: React.FC = () => {
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 select-none">
       
       {/* Top Welcome Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neptune-800 pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight flex items-center gap-2 flex-wrap">
             <span>Welcome to {settings.agencyName}</span>
-            <span className="px-2 py-0.5 text-xs bg-brand-500/20 text-brand-400 rounded-md font-mono border border-brand-500/30">
+            <span className="px-2 py-0.5 text-xs bg-coral-500/20 text-coral rounded-md font-mono border border-coral-500/30">
               {settings.oilCompany}
             </span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-seafoam mt-1">
             Distributor Management System • Live Operations Dashboard ({todayStr})
           </p>
         </div>
@@ -90,16 +90,16 @@ export const Dashboard: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={() => { setPreselectedCustomerId(undefined); setIsAddBookingOpen(true); }}
-            className="flex-1 sm:flex-none px-4 py-2 bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-600 hover:to-orange-700 text-white font-bold rounded-xl shadow-lg shadow-brand-500/20 text-xs flex items-center justify-center gap-2 transition-all"
+            className="flex-1 sm:flex-none px-4 py-2 bg-gradient-to-r from-coral-500 to-rose hover:from-coral-600 hover:to-rose-600 text-white font-bold rounded-xl shadow-lg shadow-coral-500/20 text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
             <span>New Refill Booking</span>
           </button>
           <button
             onClick={() => setIsAddCustomerOpen(true)}
-            className="flex-1 sm:flex-none px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-700 transition-all"
+            className="flex-1 sm:flex-none px-4 py-2 bg-neptune-900 hover:bg-neptune-800 text-slate-200 font-semibold rounded-xl text-xs flex items-center justify-center gap-2 border border-neptune-800 transition-all cursor-pointer"
           >
-            <Users className="w-4 h-4 text-brand-400" />
+            <Users className="w-4 h-4 text-sunbeam" />
             <span>Register Consumer</span>
           </button>
         </div>
@@ -110,9 +110,9 @@ export const Dashboard: React.FC = () => {
         <StatCard
           title="Total Customers"
           value={totalCustomers}
-          subText="Registered LPG Connections"
+          subText="Registered Connections"
           icon={Users}
-          color="blue"
+          color="neptune"
           trend="+12 this month"
         />
         <StatCard
@@ -120,7 +120,7 @@ export const Dashboard: React.FC = () => {
           value={ujjwalaCount}
           subText="Subsidized Connections"
           icon={Flame}
-          color="orange"
+          color="coral"
           trend="Free Stove Scheme"
         />
         <StatCard
@@ -128,22 +128,22 @@ export const Dashboard: React.FC = () => {
           value={generalCount}
           subText="Standard 14.2kg Users"
           icon={Users}
-          color="emerald"
+          color="melon"
         />
         <StatCard
           title="Today's Bookings"
           value={todayBookingsCount}
           subText="Refill Requests Today"
           icon={CalendarCheck}
-          color="purple"
+          color="sunbeam"
           trend="Live Count"
         />
         <StatCard
           title="45-Day Refill Due"
           value={due45Count}
-          subText="Due Today / 45+ Days Overdue"
+          subText="Due Today / 45+ Days"
           icon={Clock}
-          color="amber"
+          color="rose"
           trend="Action Needed"
         />
         <StatCard
@@ -151,7 +151,7 @@ export const Dashboard: React.FC = () => {
           value={pendingDeliveriesCount}
           subText="Out for Dispatch"
           icon={Truck}
-          color="rose"
+          color="seafoam"
         />
       </div>
 
@@ -256,28 +256,28 @@ export const Dashboard: React.FC = () => {
               <AreaChart data={refillTrendData}>
                 <defs>
                   <linearGradient id="colorBookings" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f97316" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#f97316" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#E9633E" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#E9633E" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="day" stroke="#64748b" fontSize={11} />
-                <YAxis stroke="#64748b" fontSize={11} />
+                <XAxis dataKey="day" stroke="#537987" fontSize={11} />
+                <YAxis stroke="#537987" fontSize={11} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '0.5rem', color: '#f8fafc', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#16242B', borderColor: '#2F4954', borderRadius: '0.75rem', color: '#f8fafc', fontSize: '12px' }}
                 />
-                <Area type="monotone" dataKey="bookings" stroke="#f97316" strokeWidth={3} fillOpacity={1} fill="url(#colorBookings)" />
+                <Area type="monotone" dataKey="bookings" stroke="#E9633E" strokeWidth={3} fillOpacity={1} fill="url(#colorBookings)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Pie Chart - Ujjwala vs General Distribution */}
-        <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
+        <div className="bg-neptune-900 border border-neptune-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
           <div>
             <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-              <Flame className="w-4 h-4 text-orange-400" /> Consumer Scheme Mix
+              <Flame className="w-4 h-4 text-coral" /> Consumer Scheme Mix
             </h3>
-            <p className="text-[11px] text-slate-400">PMUY Ujjwala vs General connections</p>
+            <p className="text-[11px] text-seafoam">PMUY Ujjwala vs General connections</p>
           </div>
 
           <div className="h-52 my-2">
@@ -297,35 +297,35 @@ export const Dashboard: React.FC = () => {
                   ))}
                 </Pie>
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '0.5rem', color: '#f8fafc', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#16242B', borderColor: '#2F4954', borderRadius: '0.75rem', color: '#f8fafc', fontSize: '12px' }}
                 />
-                <Legend verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: '11px', color: '#cbd5e1' }} />
+                <Legend verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: '11px', color: '#AAC1AD' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex justify-between">
+          <div className="p-3 bg-neptune-950 rounded-xl border border-neptune-800 text-[11px] text-slate-300 flex justify-between">
             <span>Ujjwala Subsidy Rate:</span>
-            <strong className="text-emerald-400">₹{settings.subsidyAmount.toFixed(2)} / cylinder</strong>
+            <strong className="text-melon font-bold">₹{settings.subsidyAmount.toFixed(2)} / cylinder</strong>
           </div>
         </div>
 
       </div>
 
       {/* RECENT BOOKINGS & DISPATCH TABLE */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl p-5">
+      <div className="bg-neptune-900 border border-neptune-800 rounded-2xl shadow-xl p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-              <CalendarCheck className="w-4 h-4 text-brand-400" /> Recent Refill Booking Requests
+              <CalendarCheck className="w-4 h-4 text-coral" /> Recent Refill Booking Requests
             </h3>
-            <p className="text-[11px] text-slate-400">Real-time booking list & printable cash memo generator</p>
+            <p className="text-[11px] text-seafoam">Real-time booking list & printable cash memo generator</p>
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-950 text-slate-400 uppercase font-semibold border-b border-slate-800">
+            <thead className="bg-neptune-950 text-slate-400 uppercase font-semibold border-b border-neptune-800">
               <tr>
                 <th className="p-3">Booking Ref</th>
                 <th className="p-3">Consumer No & Name</th>
@@ -336,26 +336,26 @@ export const Dashboard: React.FC = () => {
                 <th className="p-3 text-right">Cash Memo</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-neptune-800/60">
               {bookings.slice(0, 5).map(b => (
-                <tr key={b.id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="p-3 font-mono font-bold text-brand-400">{b.bookingNo}</td>
+                <tr key={b.id} className="hover:bg-neptune-800/40 transition-colors">
+                  <td className="p-3 font-mono font-bold text-coral">{b.bookingNo}</td>
                   <td className="p-3">
                     <p className="font-semibold text-slate-100">{b.customerName}</p>
-                    <p className="text-[10px] text-slate-400 font-mono">{b.consumerNo}</p>
+                    <p className="text-[10px] text-seafoam font-mono">{b.consumerNo}</p>
                   </td>
                   <td className="p-3">
-                    <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold capitalize ${b.scheme === 'ujjwala' ? 'bg-orange-500/20 text-orange-400' : 'bg-sky-500/20 text-sky-400'}`}>
+                    <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold capitalize ${b.scheme === 'ujjwala' ? 'bg-coral-500/20 text-coral border border-coral-500/30' : 'bg-neptune-500/20 text-neptune-300 border border-neptune-500/30'}`}>
                       {b.scheme} ({b.cylinderType})
                     </span>
                   </td>
                   <td className="p-3 font-mono">{b.bookingDate}</td>
-                  <td className="p-3 font-bold text-emerald-400">₹{b.amount.toFixed(2)}</td>
+                  <td className="p-3 font-bold text-melon">₹{b.amount.toFixed(2)}</td>
                   <td className="p-3">
                     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
-                      b.status === 'delivered' ? 'bg-emerald-500/20 text-emerald-400' :
-                      b.status === 'out_for_delivery' ? 'bg-sky-500/20 text-sky-400' :
-                      'bg-amber-500/20 text-amber-400'
+                      b.status === 'delivered' ? 'bg-melon/20 text-melon border border-melon/30' :
+                      b.status === 'out_for_delivery' ? 'bg-neptune-500/20 text-neptune-300 border border-neptune-500/30' :
+                      'bg-sunbeam/20 text-sunbeam border border-sunbeam/30'
                     }`}>
                       {b.status === 'delivered' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
                       {b.status.replace('_', ' ')}
@@ -364,9 +364,9 @@ export const Dashboard: React.FC = () => {
                   <td className="p-3 text-right">
                     <button
                       onClick={() => setSelectedBookingForMemo(b)}
-                      className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-medium rounded-lg border border-slate-700 transition-colors inline-flex items-center gap-1"
+                      className="px-2.5 py-1 bg-neptune-950 hover:bg-neptune-800 text-slate-200 text-[11px] font-medium rounded-lg border border-neptune-800 transition-colors inline-flex items-center gap-1 cursor-pointer"
                     >
-                      <Printer className="w-3.5 h-3.5 text-brand-400" /> Cash Memo
+                      <Printer className="w-3.5 h-3.5 text-coral" /> Cash Memo
                     </button>
                   </td>
                 </tr>

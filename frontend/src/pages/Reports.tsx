@@ -35,9 +35,9 @@ export const Reports: React.FC = () => {
   ];
 
   const categoryShare = [
-    { name: 'General Domestic 14.2kg', value: 680, color: '#0284c7' },
-    { name: 'PMUY Ujjwala Subsidized', value: 450, color: '#f97316' },
-    { name: 'Commercial 19kg', value: 110, color: '#a855f7' },
+    { name: 'General Domestic 14.2kg', value: 680, color: '#537987' },
+    { name: 'PMUY Ujjwala Subsidized', value: 450, color: '#E9633E' },
+    { name: 'Commercial 19kg', value: 110, color: '#EAAA42' },
   ];
 
   const handleExportCSV = () => {
@@ -160,9 +160,9 @@ export const Reports: React.FC = () => {
                   contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '0.5rem', color: '#f8fafc', fontSize: '12px' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px', color: '#cbd5e1' }} />
-                <Bar dataKey="domestic" name="General Domestic 14.2kg" fill="#0284c7" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="ujjwala" name="PMUY Ujjwala 14.2kg" fill="#f97316" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="commercial" name="Commercial 19kg" fill="#a855f7" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="domestic" name="General Domestic 14.2kg" fill="#537987" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="ujjwala" name="PMUY Ujjwala 14.2kg" fill="#E9633E" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="commercial" name="Commercial 19kg" fill="#EAAA42" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

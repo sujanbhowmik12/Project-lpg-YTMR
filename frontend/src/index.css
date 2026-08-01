@@ -4,17 +4,47 @@
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100 font-sans antialiased;
+    @apply bg-neptune-950 text-slate-100 font-sans antialiased selection:bg-coral-500 selection:text-white;
   }
 }
 
-/* Page Setup for Single Page PDF Export: margin: 0 removes browser header date/title & footer URL */
+/* Custom Palette Utility Gradients & Badges */
+.bg-palette-card {
+  background-color: #16242B;
+  border-color: #2F4954;
+}
+
+.text-rose-custom { color: #E3A58A; }
+.bg-rose-custom { background-color: #E3A58A; }
+.border-rose-custom { border-color: #E3A58A; }
+
+.text-coral-custom { color: #E9633E; }
+.bg-coral-custom { background-color: #E9633E; }
+.border-coral-custom { border-color: #E9633E; }
+
+.text-sunbeam-custom { color: #EAAA42; }
+.bg-sunbeam-custom { background-color: #EAAA42; }
+.border-sunbeam-custom { border-color: #EAAA42; }
+
+.text-melon-custom { color: #A0AF72; }
+.bg-melon-custom { background-color: #A0AF72; }
+.border-melon-custom { border-color: #A0AF72; }
+
+.text-seafoam-custom { color: #AAC1AD; }
+.bg-seafoam-custom { background-color: #AAC1AD; }
+.border-seafoam-custom { border-color: #AAC1AD; }
+
+.text-neptune-custom { color: #537987; }
+.bg-neptune-custom { background-color: #537987; }
+.border-neptune-custom { border-color: #537987; }
+
+/* Page Setup for Single Page PDF Export */
 @page {
   size: A4 portrait;
   margin: 0;
 }
 
-/* Bulletproof Print & Save PDF Styles: Print ONLY the Cash Memo Invoice card on EXACTLY 1 Page */
+/* Print & Save PDF Styles */
 @media print {
   @page {
     size: A4 portrait;
@@ -34,22 +64,18 @@
     print-color-adjust: exact !important;
   }
 
-  /* Hide header, navigation, sidebars, and extra DOM nodes during print */
   header, aside, nav, .print\:hidden {
     display: none !important;
   }
 
-  /* Hide everything on website except printable-memo */
   body * {
     visibility: hidden !important;
   }
 
-  /* Make ONLY #printable-memo and its children visible */
   #printable-memo, #printable-memo * {
     visibility: visible !important;
   }
 
-  /* Display ONLY #printable-memo on EXACTLY 1 single page without page breaks */
   #printable-memo {
     display: block !important;
     position: relative !important;
@@ -79,27 +105,7 @@
   }
 
   #printable-memo .text-orange-600 {
-    color: #ea580c !important;
-  }
-
-  #printable-memo .text-emerald-700, #printable-memo .text-emerald-800 {
-    color: #047857 !important;
-  }
-
-  #printable-memo .bg-slate-900 {
-    background-color: #0f172a !important;
-  }
-
-  #printable-memo .bg-slate-900 * {
-    color: #ffffff !important;
-  }
-
-  #printable-memo .text-emerald-400 {
-    color: #34d399 !important;
-  }
-
-  #printable-memo .bg-slate-50 {
-    background-color: #f8fafc !important;
+    color: #E9633E !important;
   }
 
   #printable-memo table, #printable-memo th, #printable-memo td {

@@ -49,25 +49,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
       {/* Sidebar Content (Sticky on desktop, Slide-over on mobile) */}
       <aside 
-        className={`w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between h-screen sticky top-0 select-none transition-transform duration-300 z-50 ${
+        className={`w-64 bg-neptune-950 border-r border-neptune-800 flex flex-col justify-between h-screen sticky top-0 select-none transition-transform duration-300 z-50 ${
           isOpen ? 'fixed inset-y-0 left-0 translate-x-0 shadow-2xl' : 'hidden md:flex'
         }`}
       >
         <div>
           {/* Brand Header */}
-          <div className="p-4 border-b border-slate-800/80 flex items-center justify-between bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950">
+          <div className="p-4 border-b border-neptune-800 flex items-center justify-between bg-gradient-to-r from-neptune-950 via-neptune-900 to-neptune-950">
             <div className="flex items-center gap-3">
               <img 
                 src="/logoytmr.png" 
                 alt="YTMR LPG Logo" 
-                className="w-10 h-10 object-contain rounded-xl shadow-lg ring-1 ring-brand-500/40 bg-slate-900 p-0.5" 
+                className="w-10 h-10 object-contain rounded-xl shadow-lg ring-1 ring-coral-500/40 bg-neptune-900 p-0.5" 
               />
               <div>
                 <h1 className="font-extrabold text-slate-100 text-base tracking-tight leading-none">
-                  YTMR-<span className="text-brand-500">LPG</span>
+                  YTMR-<span className="text-coral-500">LPG</span>
                 </h1>
                 <p className="text-[11px] text-slate-400 font-mono mt-1">
-                  Code: <span className="text-slate-300 font-semibold">{settings.distributorCode}</span>
+                  Code: <span className="text-sunbeam font-semibold">{settings.distributorCode}</span>
                 </p>
               </div>
             </div>
@@ -76,7 +76,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {onClose && (
               <button 
                 onClick={onClose}
-                className="md:hidden p-1 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800"
+                className="md:hidden p-1 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-neptune-800"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -84,9 +84,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Admin Console Badge */}
-          <div className="mx-3 my-3 p-2 bg-slate-900/90 rounded-lg border border-slate-800 flex items-center gap-2 text-xs">
-            <ShieldAlert className="w-4 h-4 text-brand-400 shrink-0" />
-            <span className="text-slate-300 font-semibold truncate">YTMR Admin Console</span>
+          <div className="mx-3 my-3 p-2 bg-neptune-900/90 rounded-lg border border-neptune-800 flex items-center gap-2 text-xs">
+            <ShieldAlert className="w-4 h-4 text-sunbeam shrink-0" />
+            <span className="text-seafoam font-semibold truncate">YTMR Admin Console</span>
           </div>
 
           {/* Navigation Menu */}
@@ -99,8 +99,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
                     isActive
-                      ? 'bg-gradient-to-r from-brand-500 to-orange-600 text-white shadow-md shadow-orange-500/20 font-bold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/80'
+                      ? 'bg-gradient-to-r from-coral-500 to-rose text-white shadow-md shadow-coral-500/25 font-bold'
+                      : 'text-slate-300 hover:text-white hover:bg-neptune-900/80'
                   }`
                 }
               >
@@ -112,21 +112,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer / Profile Box */}
-        <div className="p-3 border-t border-slate-800/80 bg-slate-950">
-          <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
+        <div className="p-3 border-t border-neptune-800 bg-neptune-950">
+          <div className="flex items-center justify-between p-2 rounded-xl bg-neptune-900 border border-neptune-800">
             <div className="flex items-center gap-2.5 truncate">
-              <div className="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 font-bold text-xs flex items-center justify-center ring-1 ring-slate-700 shrink-0">
+              <div className="w-8 h-8 rounded-full bg-coral-500/20 text-coral font-bold text-xs flex items-center justify-center ring-1 ring-coral-500/30 shrink-0">
                 {user?.name ? user.name.charAt(0) : 'A'}
               </div>
               <div className="truncate">
                 <p className="text-xs font-semibold text-slate-200 truncate">{user?.name}</p>
-                <p className="text-[10px] text-slate-400 truncate">{user?.email}</p>
+                <p className="text-[10px] text-seafoam truncate">{user?.email}</p>
               </div>
             </div>
             <button 
               onClick={logout}
               title="Log Out"
-              className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors shrink-0"
+              className="p-1.5 text-slate-400 hover:text-coral hover:bg-coral/10 rounded-lg transition-colors shrink-0"
             >
               <LogOut className="w-4 h-4" />
             </button>
