@@ -1,5 +1,7 @@
-import React from 'react';
-import { X, Printer, CheckCircle2, Flame } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Printer, Flame, Download, Loader2 } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import { Booking } from '../types';
 import { useLPG } from '../context/LPGContext';
 
@@ -10,6 +12,7 @@ interface CashMemoModalProps {
 
 export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }) => {
   const { settings, customers } = useLPG();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   if (!booking) return null;
 
@@ -27,6 +30,42 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
   const safeScheme = booking.scheme || 'general';
   const safePaymentStatus = booking.paymentStatus || 'paid';
   const safeSubsidy = settings.subsidyAmount || 200.00;
+
+  const handleDownloadPDF = async () => {
+    const memoElement = document.getElementById('printable-memo');
+    if (!memoElement) return;
+
+    try {
+      setIsDownloading(true);
+
+      const canvas = await html2canvas(memoElement, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const imgWidth = pdfWidth - 20; // 10mm margins on left & right
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 10, 15, imgWidth, imgHeight);
+      pdf.save(`Refill_Cash_Memo_${safeCashMemoNo}.pdf`);
+    } catch (err) {
+      console.error('PDF generation error, switching to print fallback:', err);
+      handlePrint();
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const handlePrint = () => {
     const memoElement = document.getElementById('printable-memo');
@@ -132,6 +171,14 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
             <h2 className="text-base font-bold text-slate-200">Refill Cash Memo & Invoice</h2>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={handleDownloadPDF}
+              disabled={isDownloading}
+              className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-lg cursor-pointer disabled:opacity-50"
+            >
+              {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              Download PDF
+            </button>
             <button
               onClick={handlePrint}
               className="flex items-center gap-1.5 bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-600 hover:to-orange-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-lg cursor-pointer"
