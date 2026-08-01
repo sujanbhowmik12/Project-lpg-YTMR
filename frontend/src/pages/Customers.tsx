@@ -15,11 +15,13 @@ import {
   FileSpreadsheet,
   Sparkles,
   Lock,
-  Printer
+  Printer,
+  Camera
 } from 'lucide-react';
 import { useLPG } from '../context/LPGContext';
 import { Customer, Booking } from '../types';
 import { AddCustomerModal } from '../components/AddCustomerModal';
+import { ScanCustomerModal } from '../components/ScanCustomerModal';
 import { AddBookingModal } from '../components/AddBookingModal';
 import { CashMemoModal } from '../components/CashMemoModal';
 import { EligibleOnwardsSection } from '../components/EligibleOnwardsSection';
@@ -33,6 +35,8 @@ export const Customers: React.FC = () => {
   const [selectedScheme, setSelectedScheme] = useState<string>('all');
   const [onlyKeepEligibleOnwards, setOnlyKeepEligibleOnwards] = useState<boolean>(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isScanOpen, setIsScanOpen] = useState(false);
+  const [scannedCustomerData, setScannedCustomerData] = useState<Partial<Customer> | null>(null);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   
   // State for quick refill booking modal
@@ -126,10 +130,18 @@ export const Customers: React.FC = () => {
             <FileSpreadsheet className="w-4 h-4 text-emerald-400" /> Export CSV
           </button>
           <button
-            onClick={() => { setEditingCustomer(null); setIsAddModalOpen(true); }}
+            onClick={() => { setEditingCustomer(null); setScannedCustomerData(null); setIsAddModalOpen(true); }}
             className="flex-1 sm:flex-none px-4 py-2 bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-600 hover:to-orange-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-brand-500/20 flex items-center justify-center gap-1.5 transition-all"
           >
             <Plus className="w-4 h-4" /> Add New Consumer
+          </button>
+          <button
+            onClick={() => setIsScanOpen(true)}
+            className="flex-1 sm:flex-none px-3.5 py-2 bg-purple-950/80 hover:bg-purple-900 text-purple-200 font-bold text-xs rounded-xl border border-purple-500/40 shadow-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+            title="Scan customer document photo via camera"
+          >
+            <Camera className="w-4 h-4 text-purple-400" />
+            <span>Scan Photo</span>
           </button>
         </div>
       </div>
@@ -455,14 +467,27 @@ export const Customers: React.FC = () => {
       {/* Modal for Add or Edit Customer */}
       {isAddModalOpen && (
         <AddCustomerModal
-          initialData={editingCustomer}
-          onClose={() => setIsAddModalOpen(false)}
+          initialData={editingCustomer || scannedCustomerData}
+          onClose={() => { setIsAddModalOpen(false); setEditingCustomer(null); setScannedCustomerData(null); }}
           onSubmit={(data) => {
             if (editingCustomer) {
               updateCustomer(editingCustomer.id, data);
             } else {
               addCustomer(data);
             }
+          }}
+        />
+      )}
+
+      {/* Modal for Camera Photo Scan */}
+      {isScanOpen && (
+        <ScanCustomerModal
+          onClose={() => setIsScanOpen(false)}
+          onScannedData={(scanned) => {
+            setEditingCustomer(null);
+            setScannedCustomerData(scanned);
+            setIsScanOpen(false);
+            setIsAddModalOpen(true);
           }}
         />
       )}

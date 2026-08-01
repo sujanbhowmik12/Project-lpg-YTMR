@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { X, UserPlus, ShieldCheck, FileCheck } from 'lucide-react';
+import { X, UserPlus, ShieldCheck, FileCheck, Camera, Sparkles } from 'lucide-react';
 import { Customer, SchemeType, CylinderType } from '../types';
+import { ScanCustomerModal } from './ScanCustomerModal';
 
 interface AddCustomerModalProps {
   onClose: () => void;
   onSubmit: (customerData: Omit<Customer, 'id' | 'createdAt' | 'totalBookings'>) => void;
-  initialData?: Customer | null;
+  initialData?: Customer | Partial<Customer> | null;
 }
 
 export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({ onClose, onSubmit, initialData }) => {
+  const [isScanOpen, setIsScanOpen] = useState(false);
+
   const [formData, setFormData] = useState({
     consumerNo: initialData?.consumerNo || '',
     svNumber: initialData?.svNumber || '',
@@ -40,8 +43,20 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({ onClose, onS
     onClose();
   };
 
+  const handleScannedData = (scanned: Partial<Omit<Customer, 'id' | 'createdAt' | 'totalBookings'>>) => {
+    setFormData(prev => ({
+      ...prev,
+      ...scanned,
+      name: scanned.name || prev.name,
+      consumerNo: scanned.consumerNo || prev.consumerNo,
+      phone: scanned.phone || prev.phone,
+      address: scanned.address || prev.address,
+      careOf: scanned.careOf || prev.careOf,
+    }));
+  };
+
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 select-none">
       <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative text-slate-100 flex flex-col max-h-[92vh] overflow-y-auto">
         
         {/* Header */}
@@ -57,9 +72,22 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({ onClose, onS
               <p className="text-xs text-slate-400">Enter SV vouchers, address, and scheme classification</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-800">
-            <X className="w-5 h-5" />
-          </button>
+          
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsScanOpen(true)}
+              className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition-all cursor-pointer"
+              title="Click photo to auto-fill details"
+            >
+              <Camera className="w-3.5 h-3.5" />
+              <span>Scan via Camera</span>
+            </button>
+
+            <button onClick={onClose} className="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-800">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
@@ -276,6 +304,13 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({ onClose, onS
         </form>
 
       </div>
+
+      {isScanOpen && (
+        <ScanCustomerModal
+          onClose={() => setIsScanOpen(false)}
+          onScannedData={handleScannedData}
+        />
+      )}
     </div>
   );
 };

@@ -11,16 +11,18 @@ import {
   Printer, 
   CheckCircle2, 
   AlertCircle,
-  Sparkles
+  Sparkles,
+  Camera
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from 'recharts';
 import { useLPG } from '../context/LPGContext';
 import { StatCard } from '../components/StatCard';
 import { AddBookingModal } from '../components/AddBookingModal';
 import { AddCustomerModal } from '../components/AddCustomerModal';
+import { ScanCustomerModal } from '../components/ScanCustomerModal';
 import { CashMemoModal } from '../components/CashMemoModal';
 import { EligibleOnwardsSection } from '../components/EligibleOnwardsSection';
-import { Booking } from '../types';
+import { Booking, Customer } from '../types';
 import { calculateRefillStatus45Days } from '../utils/refillUtils';
 
 export const Dashboard: React.FC = () => {
@@ -30,6 +32,8 @@ export const Dashboard: React.FC = () => {
   const [isAddBookingOpen, setIsAddBookingOpen] = useState(false);
   const [preselectedCustomerId, setPreselectedCustomerId] = useState<string | undefined>(undefined);
   const [isAddCustomerOpen, setIsAddCustomerOpen] = useState(false);
+  const [isScanOpen, setIsScanOpen] = useState(false);
+  const [scannedCustomerData, setScannedCustomerData] = useState<Partial<Customer> | null>(null);
   const [selectedBookingForMemo, setSelectedBookingForMemo] = useState<Booking | null>(null);
 
   // Metric counts:
@@ -96,11 +100,19 @@ export const Dashboard: React.FC = () => {
             <span>New Refill Booking</span>
           </button>
           <button
-            onClick={() => setIsAddCustomerOpen(true)}
+            onClick={() => { setScannedCustomerData(null); setIsAddCustomerOpen(true); }}
             className="flex-1 sm:flex-none px-4 py-2 bg-neptune-900 hover:bg-neptune-800 text-slate-200 font-semibold rounded-xl text-xs flex items-center justify-center gap-2 border border-neptune-800 transition-all cursor-pointer"
           >
             <Users className="w-4 h-4 text-sunbeam" />
             <span>Register Consumer</span>
+          </button>
+          <button
+            onClick={() => setIsScanOpen(true)}
+            className="flex-1 sm:flex-none px-3 py-2 bg-purple-950/80 hover:bg-purple-900 text-purple-200 font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-purple-500/40 shadow-sm transition-all cursor-pointer"
+            title="Scan customer document photo via camera"
+          >
+            <Camera className="w-4 h-4 text-purple-400" />
+            <span>Scan Photo</span>
           </button>
         </div>
       </div>
@@ -390,8 +402,20 @@ export const Dashboard: React.FC = () => {
 
       {isAddCustomerOpen && (
         <AddCustomerModal
-          onClose={() => setIsAddCustomerOpen(false)}
+          initialData={scannedCustomerData}
+          onClose={() => { setIsAddCustomerOpen(false); setScannedCustomerData(null); }}
           onSubmit={(cData) => addCustomer(cData)}
+        />
+      )}
+
+      {isScanOpen && (
+        <ScanCustomerModal
+          onClose={() => setIsScanOpen(false)}
+          onScannedData={(scanned) => {
+            setScannedCustomerData(scanned);
+            setIsScanOpen(false);
+            setIsAddCustomerOpen(true);
+          }}
         />
       )}
 
