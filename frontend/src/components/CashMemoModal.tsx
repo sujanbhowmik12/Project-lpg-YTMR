@@ -29,66 +29,12 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
   const safeSubsidy = settings.subsidyAmount || 200.00;
 
   const handlePrint = () => {
-    const memoElement = document.getElementById('printable-memo');
-    if (!memoElement) {
-      window.print();
-      return;
-    }
-
-    const printWindow = window.open('', '_blank', 'width=800,height=900');
-    if (!printWindow) {
-      window.print();
-      return;
-    }
-
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Refill Cash Memo - ${safeCashMemoNo}</title>
-          <script src="https://cdn.tailwindcss.com"></script>
-          <style>
-            @page { size: portrait; margin: 10mm; }
-            body { 
-              background: #ffffff !important; 
-              color: #0f172a !important; 
-              font-family: ui-sans-serif, system-ui, sans-serif;
-              margin: 0;
-              padding: 16px;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-            #printable-memo {
-              width: 100% !important;
-              max-width: 680px !important;
-              margin: 0 auto !important;
-              border: 2px solid #0f172a !important;
-              border-radius: 16px !important;
-              padding: 24px !important;
-              background: #ffffff !important;
-              color: #0f172a !important;
-            }
-          </style>
-        </head>
-        <body>
-          <div id="printable-memo">
-            ${memoElement.innerHTML}
-          </div>
-          <script>
-            setTimeout(() => {
-              window.print();
-              window.close();
-            }, 600);
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
+    window.print();
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:static print:bg-transparent print:p-0">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative text-slate-100 flex flex-col max-h-[90vh] overflow-y-auto print:bg-transparent print:border-none print:shadow-none print:p-0 print:max-h-none print:overflow-visible">
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:static print:bg-transparent print:p-0 print:m-0 print:w-full print:h-auto print:block">
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative text-slate-100 flex flex-col max-h-[90vh] overflow-y-auto print:bg-transparent print:border-none print:shadow-none print:p-0 print:max-h-none print:overflow-visible print:w-full print:max-w-none print:block">
         
         {/* Modal Controls */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4 print:hidden">
@@ -101,7 +47,7 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
               onClick={handlePrint}
               className="flex items-center gap-1.5 bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-600 hover:to-orange-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-lg cursor-pointer"
             >
-              <Printer className="w-4 h-4" /> Save as PDF / Print Cash Memo
+              <Printer className="w-4 h-4" /> Print Cash Memo
             </button>
             <button
               onClick={onClose}
