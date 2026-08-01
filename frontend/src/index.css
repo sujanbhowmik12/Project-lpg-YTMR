@@ -8,18 +8,32 @@
   }
 }
 
-/* Bulletproof Print & Save PDF Styles: Print ONLY the Cash Memo Invoice card with website logo */
+/* Page Setup for Single Page PDF Export */
+@page {
+  size: portrait;
+  margin: 8mm;
+}
+
+/* Bulletproof Print & Save PDF Styles: Print ONLY the Cash Memo Invoice card on EXACTLY 1 Page */
 @media print {
   html, body {
     background: #ffffff !important;
     color: #000000 !important;
+    width: 100% !important;
+    height: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    overflow: hidden !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Hide everything on website during print */
+  /* Hide header, navigation, sidebars, and extra DOM nodes during print */
+  header, aside, nav, .print\:hidden {
+    display: none !important;
+  }
+
+  /* Hide everything on website except printable-memo */
   body * {
     visibility: hidden !important;
   }
@@ -29,20 +43,21 @@
     visibility: visible !important;
   }
 
-  /* Position printable memo at the top-left of the page */
+  /* Display ONLY #printable-memo on EXACTLY 1 single page */
   #printable-memo {
-    position: fixed !important;
-    left: 0 !important;
-    top: 0 !important;
+    display: block !important;
+    position: relative !important;
     width: 100% !important;
-    height: auto !important;
-    margin: 0 !important;
-    padding: 24px !important;
+    max-width: 680px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
     background-color: #ffffff !important;
     color: #0f172a !important;
     box-shadow: none !important;
     border: 2px solid #0f172a !important;
     border-radius: 12px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
     z-index: 9999999 !important;
   }
 
