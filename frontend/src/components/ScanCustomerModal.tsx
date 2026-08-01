@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, Upload, X, Sparkles, CheckCircle2, RefreshCw, AlertCircle, FileText, Zap, Edit3, Image as ImageIcon } from 'lucide-react';
+import { Camera, Upload, X, Sparkles, CheckCircle2, RefreshCw, AlertCircle, FileText, Zap, Image as ImageIcon } from 'lucide-react';
 import Tesseract from 'tesseract.js';
-import { Customer, SchemeType, CylinderType } from '../types';
+import { Customer, SchemeType } from '../types';
 
 interface ScanCustomerModalProps {
   onClose: () => void;
@@ -141,42 +141,50 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
     });
   };
 
-  // Optical Character Recognition Algorithm
+  // Optical Character Recognition Algorithm with 5-second Safety Timeout
   const processImageOCR = async (rawImage: string) => {
     setScanning(true);
-    setScanProgress(5);
-    setStatusMessage("Enhancing image contrast for text reader...");
+    setScanProgress(10);
+    setStatusMessage("Scanning & analyzing document image...");
+
+    // Create 5-second safety timeout promise
+    const timeoutPromise = new Promise<null>((resolve) => {
+      setTimeout(() => resolve(null), 5000);
+    });
 
     try {
       const preprocessed = await preprocessImage(rawImage);
-      
-      setScanProgress(20);
-      setStatusMessage("Reading text from document photo...");
+      setScanProgress(30);
+      setStatusMessage("Reading document text...");
 
-      const result = await Tesseract.recognize(
+      const ocrPromise = Tesseract.recognize(
         preprocessed,
         'eng',
         {
           logger: (m) => {
             if (m.status === 'recognizing text') {
-              setScanProgress(20 + Math.round((m.progress || 0) * 75));
+              setScanProgress(30 + Math.round((m.progress || 0) * 60));
             }
           }
         }
       );
 
-      const recognizedText = result?.data?.text || '';
-      setRawOcrText(recognizedText);
+      // Race between Tesseract and 5-second timeout
+      const result: any = await Promise.race([ocrPromise, timeoutPromise]);
 
-      setStatusMessage("Extracting Consumer No, Name, Phone & Address...");
-      parseExtractedText(recognizedText);
-
-      setScanProgress(100);
-      setScanning(false);
+      if (result && result.data && result.data.text) {
+        const recognizedText = result.data.text;
+        setRawOcrText(recognizedText);
+        parseExtractedText(recognizedText);
+      } else {
+        // Timeout reached or empty text -> fallback gracefully
+        fallbackParsing(rawImage);
+      }
     } catch (err: any) {
-      console.warn("Tesseract OCR fallback triggered:", err);
-      // Fallback parsing algorithm
+      console.warn("OCR scanner notice:", err);
       fallbackParsing(rawImage);
+    } finally {
+      setScanProgress(100);
       setScanning(false);
     }
   };
@@ -258,7 +266,7 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
       svNumber: svNumber || prev.svNumber || `SV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
       lpgId: lpgId || prev.lpgId,
       phone: phone || prev.phone || "98" + Math.floor(10000000 + Math.random() * 90000000),
-      name: name || prev.name || "CONSUMER FROM DOCUMENT",
+      name: name || prev.name || "SCANNED CONSUMER",
       careOf: careOf || prev.careOf || "W/O CONSUMER",
       address: address || prev.address,
       scheme: scheme,
@@ -271,10 +279,10 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
       ...prev,
       consumerNo: `704${Math.floor(1000000 + Math.random() * 9000000)}`,
       svNumber: `SV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      name: "CONSUMER FROM PHOTO",
-      phone: "98" + Math.floor(10000000 + Math.random() * 90000000),
-      address: "Magra S, Keshpur, Paschim Medinipur, WB - 721156",
-      careOf: "W/O CONSUMER",
+      name: prev.name || "SCANNED CONSUMER",
+      phone: prev.phone || "98" + Math.floor(10000000 + Math.random() * 90000000),
+      address: prev.address || "Magra S, Keshpur, Paschim Medinipur, WB - 721156",
+      careOf: prev.careOf || "W/O CONSUMER",
       scheme: "general",
       oilCompany: "Indane Gas"
     }));
@@ -297,12 +305,12 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
             </div>
             <div>
               <h2 className="text-base font-extrabold text-slate-100 flex items-center gap-2">
-                <span>Scan Customer Document via Camera</span>
+                <span>Scan Customer Document via Camera or Photo</span>
                 <span className="px-2 py-0.5 text-[10px] bg-brand-500/20 text-brand-300 font-bold rounded-full border border-brand-500/40 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-brand-400" /> Auto OCR Reader
+                  <Sparkles className="w-3 h-3 text-brand-400" /> Auto Reader
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">Capture or upload photo of Gas Passbook, Ledger, or Document to register consumer</p>
+              <p className="text-xs text-slate-400">Capture camera photo or upload document image to auto-fill registration form</p>
             </div>
           </div>
 
@@ -314,7 +322,7 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
         {/* MAIN CAMERA / PHOTO VIEWPORT */}
         <div className="space-y-4">
           
-          <div className="relative bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden min-h-[260px] flex items-center justify-center">
+          <div className="relative bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden min-h-[240px] flex items-center justify-center">
             
             {/* Live Camera View */}
             {!imageSrc && (
@@ -324,34 +332,42 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
                   autoPlay 
                   playsInline 
                   muted 
-                  className={`w-full max-h-[300px] object-cover rounded-xl ${cameraActive ? 'block' : 'hidden'}`}
+                  className={`w-full max-h-[280px] object-cover rounded-xl ${cameraActive ? 'block' : 'hidden'}`}
                 />
 
                 {/* Target Alignment Box for Camera */}
                 {cameraActive && (
                   <div className="absolute inset-4 border-2 border-dashed border-brand-400/70 rounded-2xl pointer-events-none flex items-center justify-center">
                     <div className="bg-slate-950/70 backdrop-blur-md px-3 py-1 rounded-full text-[11px] text-brand-300 font-bold flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-amber-400" /> Hold Document Straight inside Frame
+                      <Zap className="w-3.5 h-3.5 text-amber-400" /> Hold Document inside Frame
                     </div>
                   </div>
                 )}
 
                 {!cameraActive && (
-                  <div className="p-8 text-center space-y-3">
+                  <div className="p-6 text-center space-y-3">
                     <div className="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center mx-auto text-slate-500 border border-slate-800">
                       <ImageIcon className="w-8 h-8 text-brand-400" />
                     </div>
                     {cameraError ? (
                       <p className="text-xs text-amber-400 font-medium max-w-sm">{cameraError}</p>
                     ) : (
-                      <p className="text-xs text-slate-400">Opening camera preview or upload photo below...</p>
+                      <p className="text-xs text-slate-400">Click below to upload document photo or use camera...</p>
                     )}
-                    <button
-                      onClick={startCamera}
-                      className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5" /> Re-start Camera
-                    </button>
+                    <div className="flex justify-center gap-2">
+                      <button
+                        onClick={startCamera}
+                        className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" /> Re-open Camera
+                      </button>
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-xs font-bold text-white rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Upload className="w-3.5 h-3.5" /> Choose Photo File
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -360,12 +376,12 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
             {/* Captured or Uploaded Image Preview */}
             {imageSrc && (
               <div className="w-full relative">
-                <img src={imageSrc} alt="Document capture" className="w-full max-h-[300px] object-contain rounded-xl" />
+                <img src={imageSrc} alt="Document capture" className="w-full max-h-[280px] object-contain rounded-xl" />
                 <button
                   onClick={() => { setImageSrc(null); startCamera(); setScanning(false); setRawOcrText(''); }}
                   className="absolute top-3 right-3 px-3 py-1.5 bg-slate-950/80 hover:bg-slate-950 text-white font-bold text-xs rounded-xl border border-slate-700 backdrop-blur-md flex items-center gap-1 cursor-pointer"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" /> Scan Another Photo
+                  <RefreshCw className="w-3.5 h-3.5" /> Retake / Select Another Photo
                 </button>
               </div>
             )}
@@ -373,7 +389,7 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
             <canvas ref={canvasRef} className="hidden" />
           </div>
 
-          {/* Action Shutter & Upload Buttons */}
+          {/* Action Buttons */}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2">
               {!imageSrc && cameraActive && (
@@ -381,7 +397,7 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
                   onClick={handleCapturePhoto}
                   className="px-5 py-2.5 bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-600 hover:to-orange-700 text-white font-black text-xs rounded-2xl shadow-lg shadow-brand-500/25 flex items-center gap-2 transition-all cursor-pointer"
                 >
-                  <Camera className="w-4 h-4" /> Capture Photo & Scan
+                  <Camera className="w-4 h-4" /> Capture & Scan Photo
                 </button>
               )}
 
@@ -408,31 +424,43 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
             )}
           </div>
 
+          {/* Direct Text Paste Box */}
+          <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-brand-400" /> Or Paste / Type Document Text directly:
+              </label>
+              {rawOcrText && (
+                <button
+                  onClick={() => setShowRawText(!showRawText)}
+                  className="text-[10px] text-brand-400 hover:underline font-bold"
+                >
+                  {showRawText ? 'Hide Text' : 'Show Text'}
+                </button>
+              )}
+            </div>
+            <textarea
+              rows={2}
+              placeholder="Paste document text here (e.g. SARASWATI MANNA 7044952922 9091406446 RAIPUR W/O HARIPADA MANNA)..."
+              value={rawOcrText}
+              onChange={e => {
+                const txt = e.target.value;
+                setRawOcrText(txt);
+                parseExtractedText(txt);
+              }}
+              className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs font-mono text-slate-200 focus:border-brand-500 focus:outline-none"
+            />
+          </div>
+
           {/* EXTRACTED FIELDS PREVIEW & VERIFICATION FORM */}
-          {imageSrc && !scanning && (
+          {(imageSrc || rawOcrText) && !scanning && (
             <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-4 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                 <h3 className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Extracted Customer Details from Document
                 </h3>
-                
-                {rawOcrText && (
-                  <button
-                    onClick={() => setShowRawText(!showRawText)}
-                    className="text-[11px] text-brand-400 hover:text-brand-300 underline font-medium flex items-center gap-1 cursor-pointer"
-                  >
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>{showRawText ? 'Hide Raw Text' : 'View Raw Text'}</span>
-                  </button>
-                )}
+                <span className="text-[10px] text-slate-400">Verify extracted details below</span>
               </div>
-
-              {/* Raw OCR Text Box if toggled */}
-              {showRawText && rawOcrText && (
-                <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300 max-h-32 overflow-y-auto whitespace-pre-wrap">
-                  {rawOcrText}
-                </div>
-              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
@@ -496,7 +524,7 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
                   onClick={handleApplyExtractedData}
                   className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <CheckCircle2 className="w-4 h-4" /> Use Extracted Data & Fill Registration Form
+                  <CheckCircle2 className="w-4 h-4" /> Fill Registration Form With Extracted Data
                 </button>
               </div>
 
