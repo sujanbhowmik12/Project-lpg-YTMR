@@ -38,23 +38,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Check if returning from Google Redirect Auth
-    getRedirectResult(auth).then((result: any) => {
-      if (result?.user) {
-        const currentUser: User = {
-          id: result.user.uid,
-          name: (result.user.displayName || result.user.email?.split('@')[0] || 'GOOGLE USER').toUpperCase(),
-          email: result.user.email || '',
-          role: 'admin',
-          phone: result.user.phoneNumber || "9876543210"
-        };
-        setUser(currentUser);
-        localStorage.setItem('lpg_auth_user', JSON.stringify(currentUser));
-      }
-    }).catch((err: any) => {
-      console.warn("Google Redirect Auth result notice:", err.message);
-    });
-
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser: any) => {
       if (firebaseUser) {
         const currentUser: User = {
