@@ -174,16 +174,10 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
             <button
               onClick={handleDownloadPDF}
               disabled={isDownloading}
-              className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-lg cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-1.5 bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-600 hover:to-orange-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-lg cursor-pointer disabled:opacity-50"
             >
-              {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-              Download PDF
-            </button>
-            <button
-              onClick={handlePrint}
-              className="flex items-center gap-1.5 bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-600 hover:to-orange-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-lg cursor-pointer"
-            >
-              <Printer className="w-4 h-4" /> Print Cash Memo
+              {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Printer className="w-4 h-4" />}
+              Print Bill
             </button>
             <button
               onClick={onClose}
