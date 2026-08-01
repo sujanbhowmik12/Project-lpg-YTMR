@@ -16,13 +16,13 @@ import { getAnalytics, isSupported } from "firebase/analytics";
 
 // User's Firebase web app configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCid1FHjcDPK17CP9eKdlB9bLxux_YDyZU",
-  authDomain: "ytmr-lpg.firebaseapp.com",
-  projectId: "ytmr-lpg",
-  storageBucket: "ytmr-lpg.firebasestorage.app",
-  messagingSenderId: "345138469885",
-  appId: "1:345138469885:web:1a6b2df33946f8706d5794",
-  measurementId: "G-SSZ81SZ5QS"
+  apiKey: "AIzaSyA85tjIJFxYfHmsXSlBNAdWpDXhmF4_bk4",
+  authDomain: "lpg-ytmr.firebaseapp.com",
+  projectId: "lpg-ytmr",
+  storageBucket: "lpg-ytmr.firebasestorage.app",
+  messagingSenderId: "574656128255",
+  appId: "1:574656128255:web:680757cbf3f2315c9f18ca",
+  measurementId: "G-HF6P4GDDEV"
 };
 
 // Initialize Firebase
