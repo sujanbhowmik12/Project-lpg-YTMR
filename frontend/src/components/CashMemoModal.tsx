@@ -29,12 +29,101 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
   const safeSubsidy = settings.subsidyAmount || 200.00;
 
   const handlePrint = () => {
-    window.print();
+    const memoElement = document.getElementById('printable-memo');
+    if (!memoElement) {
+      window.print();
+      return;
+    }
+
+    // Create a temporary hidden iframe for clean printing without blank page issues
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document;
+    if (!doc) {
+      window.print();
+      return;
+    }
+
+    // Collect all loaded stylesheets and style tags from current document
+    const styleContent = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map(node => node.outerHTML)
+      .join('\n');
+
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Refill Cash Memo - ${safeCashMemoNo}</title>
+          ${styleContent}
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 0;
+            }
+            html, body {
+              background: #ffffff !important;
+              color: #0f172a !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            body {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              padding: 16px !important;
+              box-sizing: border-box !important;
+            }
+            #printable-memo {
+              width: 100% !important;
+              max-width: 640px !important;
+              margin: 0 auto !important;
+              border: 2px solid #0f172a !important;
+              border-radius: 12px !important;
+              padding: 20px !important;
+              background-color: #ffffff !important;
+              color: #0f172a !important;
+              box-shadow: none !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="printable-memo">
+            ${memoElement.innerHTML}
+          </div>
+        </body>
+      </html>
+    `);
+    doc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      setTimeout(() => {
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+      }, 1000);
+    }, 250);
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:static print:bg-transparent print:p-0 print:m-0 print:w-full print:h-auto print:block">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative text-slate-100 flex flex-col max-h-[90vh] overflow-y-auto print:bg-transparent print:border-none print:shadow-none print:p-0 print:max-h-none print:overflow-visible print:w-full print:max-w-none print:block">
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative text-slate-100 flex flex-col max-h-[90vh] overflow-y-auto">
         
         {/* Modal Controls */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4 print:hidden">
