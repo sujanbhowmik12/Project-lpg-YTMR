@@ -95,7 +95,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch, onToggleMobileMenu }) 
         <button
           onClick={onToggleMobileMenu}
           title="Open Navigation Menu"
-          className="lg:hidden p-2 text-slate-300 hover:text-white bg-slate-900 rounded-xl border border-slate-800 shrink-0 transition-colors"
+          className="md:hidden p-2 text-slate-300 hover:text-white bg-slate-900 rounded-xl border border-slate-800 shrink-0 transition-colors"
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -189,7 +189,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch, onToggleMobileMenu }) 
       </div>
 
       {/* Live Agency Metrics Bar */}
-      <div className="hidden lg:flex items-center gap-4 text-xs font-medium">
+      <div className="hidden md:flex items-center gap-4 text-xs font-medium">
         <div className="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
           <Fuel className="w-4 h-4 text-brand-400" />
           <span className="text-slate-400">14.2kg Refill:</span>

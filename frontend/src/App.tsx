@@ -25,10 +25,10 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Close mobile menu when window is resized to desktop width (>= 1024px)
+  // Close mobile menu when window is resized to desktop width (>= 768px)
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
+      if (window.innerWidth >= 768) {
         setIsMobileMenuOpen(false);
       }
     };

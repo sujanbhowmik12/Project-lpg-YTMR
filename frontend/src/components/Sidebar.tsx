@@ -43,14 +43,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {isOpen && (
         <div 
           onClick={onClose}
-          className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+          className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 md:hidden transition-opacity"
         />
       )}
 
       {/* Sidebar Content (Sticky on desktop, Slide-over on mobile) */}
       <aside 
         className={`w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between h-screen sticky top-0 select-none transition-transform duration-300 z-50 ${
-          isOpen ? 'fixed inset-y-0 left-0 translate-x-0 shadow-2xl' : 'hidden lg:flex'
+          isOpen ? 'fixed inset-y-0 left-0 translate-x-0 shadow-2xl' : 'hidden md:flex'
         }`}
       >
         <div>
@@ -76,7 +76,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {onClose && (
               <button 
                 onClick={onClose}
-                className="lg:hidden p-1 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800"
+                className="md:hidden p-1 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800"
               >
                 <X className="w-5 h-5" />
               </button>
