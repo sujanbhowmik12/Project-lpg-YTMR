@@ -15,10 +15,6 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
 
   const customer = customers.find(c => c.id === booking.customerId);
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   const safeAmount = typeof booking.amount === 'number' ? booking.amount : (settings.refillPrice14kg || 853.50);
   const safeQuantity = booking.quantity || 1;
   const safeCashMemoNo = booking.cashMemoNo || `CM-2026-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -31,6 +27,64 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
   const safeScheme = booking.scheme || 'general';
   const safePaymentStatus = booking.paymentStatus || 'paid';
   const safeSubsidy = settings.subsidyAmount || 200.00;
+
+  const handlePrint = () => {
+    const memoElement = document.getElementById('printable-memo');
+    if (!memoElement) {
+      window.print();
+      return;
+    }
+
+    const printWindow = window.open('', '_blank', 'width=800,height=900');
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Refill Cash Memo - ${safeCashMemoNo}</title>
+          <script src="https://cdn.tailwindcss.com"></script>
+          <style>
+            @page { size: portrait; margin: 10mm; }
+            body { 
+              background: #ffffff !important; 
+              color: #0f172a !important; 
+              font-family: ui-sans-serif, system-ui, sans-serif;
+              margin: 0;
+              padding: 16px;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            #printable-memo {
+              width: 100% !important;
+              max-width: 680px !important;
+              margin: 0 auto !important;
+              border: 2px solid #0f172a !important;
+              border-radius: 16px !important;
+              padding: 24px !important;
+              background: #ffffff !important;
+              color: #0f172a !important;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="printable-memo">
+            ${memoElement.innerHTML}
+          </div>
+          <script>
+            setTimeout(() => {
+              window.print();
+              window.close();
+            }, 600);
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
 
   return (
     <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:static print:bg-transparent print:p-0">
