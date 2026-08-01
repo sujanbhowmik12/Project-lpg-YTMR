@@ -15,9 +15,10 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLPG } from '../context/LPGContext';
+import { User } from '../types';
 
 export const Login: React.FC = () => {
-  const { login, loginWithGoogle, signup } = useAuth();
+  const { login, signup, setUserSession } = useAuth();
   const { settings } = useLPG();
   const navigate = useNavigate();
 
@@ -67,25 +68,21 @@ export const Login: React.FC = () => {
 
   const handleGoogleSignIn = async () => {
     setError(null);
-    setGoogleLoading(true);
-    try {
-      const googleUser = await loginWithGoogle();
-      if (googleUser) {
-        navigateToDashboard();
-      }
-    } catch (err: any) {
-      console.warn("Google Auth notice:", err);
-      navigateToDashboard();
-    } finally {
-      setGoogleLoading(false);
-    }
+    setShowGoogleModal(true);
   };
 
   const handleSelectGoogleAccount = async (selectedEmail: string, selectedName: string) => {
     setGoogleLoading(true);
     setShowGoogleModal(false);
     try {
-      await login(selectedEmail, 'password123');
+      const currentUser: User = {
+        id: `google-${Date.now()}`,
+        name: selectedName.toUpperCase(),
+        email: selectedEmail,
+        role: 'admin',
+        phone: "9876543210"
+      };
+      setUserSession(currentUser);
       navigateToDashboard();
     } catch (err: any) {
       navigateToDashboard();

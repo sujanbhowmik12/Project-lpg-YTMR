@@ -22,6 +22,7 @@ interface AuthContextType {
   signup: (email: string, password: string, name: string, phone: string) => Promise<void>;
   logout: () => Promise<void>;
   switchRole: (role: UserRole) => void;
+  setUserSession: (user: User | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -169,18 +170,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('lpg_auth_user');
   };
 
+  const setUserSession = (newUser: User | null) => {
+    setUser(newUser);
+    if (newUser) {
+      localStorage.setItem('lpg_auth_user', JSON.stringify(newUser));
+    } else {
+      localStorage.removeItem('lpg_auth_user');
+    }
+  };
+
   const switchRole = (role: UserRole) => {
     if (user) {
       const updated = { ...user, role: 'admin' as UserRole };
-      setUser(updated);
-      localStorage.setItem('lpg_auth_user', JSON.stringify(updated));
+      setUserSession(updated);
     }
   };
 
   const isAuthenticated = !!user || !!localStorage.getItem('lpg_auth_user');
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, loading, login, loginWithGoogle, signup, logout, switchRole }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, loading, login, loginWithGoogle, signup, logout, switchRole, setUserSession }}>
       {children}
     </AuthContext.Provider>
   );
