@@ -48,7 +48,12 @@ export const Login: React.FC = () => {
         }
         await signup(email, password, name, phone);
       }
-      navigate('/');
+      navigate('/', { replace: true });
+      setTimeout(() => {
+        if (window.location.pathname === '/login') {
+          window.location.href = '/';
+        }
+      }, 100);
     } catch (err: any) {
       setError(err.message || "Authentication failed. Please try again.");
     } finally {
@@ -61,7 +66,12 @@ export const Login: React.FC = () => {
     setGoogleLoading(true);
     try {
       await loginWithGoogle();
-      navigate('/');
+      navigate('/', { replace: true });
+      setTimeout(() => {
+        if (window.location.pathname === '/login') {
+          window.location.href = '/';
+        }
+      }, 100);
     } catch (err: any) {
       setError(err.message || "Google Sign-In failed. Please try again.");
     } finally {
@@ -246,7 +256,15 @@ export const Login: React.FC = () => {
             <UserCheck className="w-3.5 h-3.5 text-brand-400" /> Quick Preview Login:
           </p>
           <button
-            onClick={() => { login('admin@ytmrlpg.com', 'password123'); navigate('/'); }}
+            onClick={async () => { 
+              await login('admin@ytmrlpg.com', 'password123'); 
+              navigate('/', { replace: true });
+              setTimeout(() => {
+                if (window.location.pathname === '/login') {
+                  window.location.href = '/';
+                }
+              }, 100);
+            }}
             className="w-full py-1.5 bg-slate-900 hover:bg-slate-800 text-brand-400 font-semibold rounded-lg border border-slate-800 text-xs flex items-center justify-center gap-1.5 transition-colors"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Quick Login as Admin
