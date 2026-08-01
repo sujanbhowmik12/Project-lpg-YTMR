@@ -76,11 +76,12 @@ export const Login: React.FC = () => {
     setError(null);
     setGoogleLoading(true);
     try {
-      await loginWithGoogle();
-      navigateToDashboard();
+      const googleUser = await loginWithGoogle();
+      if (googleUser) {
+        navigateToDashboard();
+      }
     } catch (err: any) {
-      // Open Google Account Selector Modal on any popup failure or blocker
-      setShowGoogleModal(true);
+      setError(err.message || "Google Sign-In failed. Please try again.");
     } finally {
       setGoogleLoading(false);
     }

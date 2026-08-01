@@ -121,24 +121,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return currentUser;
       }
     } catch (err: any) {
-      console.warn("Firebase Google Sign-In notice:", err.message || err);
+      console.error("Firebase Google Sign-In Error:", err);
 
-      // If user closed the popup intentionally, prompt them gently
       if (err.code === 'auth/popup-closed-by-user') {
         throw new Error("Google Sign-In popup was closed. Please try again.");
+      } else if (err.code === 'auth/popup-blocked') {
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      } else if (err.code === 'auth/unauthorized-domain') {
+        throw new Error("Domain not authorized in Firebase Console! Please add your Vercel URL in Firebase Console > Authentication > Settings > Authorized Domains.");
+      } else {
+        throw new Error(err.message || "Google Sign-In failed. Please try again.");
       }
-
-      // Smooth fail-safe fallback: log in as Google Admin user if Firebase domain is not authorized yet
-      const currentUser: User = {
-        id: `google-${Date.now()}`,
-        name: "GOOGLE ADMIN USER",
-        email: "admin@ytmrlpg.com",
-        role: 'admin',
-        phone: "9876543210"
-      };
-      setUser(currentUser);
-      localStorage.setItem('lpg_auth_user', JSON.stringify(currentUser));
-      return currentUser;
     }
   };
 
