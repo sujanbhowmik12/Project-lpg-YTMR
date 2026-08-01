@@ -14,10 +14,11 @@ import {
   PhoneCall,
   FileSpreadsheet,
   Sparkles,
-  Lock
+  Lock,
+  Printer
 } from 'lucide-react';
 import { useLPG } from '../context/LPGContext';
-import { Customer } from '../types';
+import { Customer, Booking } from '../types';
 import { AddCustomerModal } from '../components/AddCustomerModal';
 import { AddBookingModal } from '../components/AddBookingModal';
 import { CashMemoModal } from '../components/CashMemoModal';
@@ -36,7 +37,7 @@ export const Customers: React.FC = () => {
   
   // State for quick refill booking modal
   const [quickBookingCustomerId, setQuickBookingCustomerId] = useState<string | null>(null);
-  const [createdMemoBookingId, setCreatedMemoBookingId] = useState<string | null>(null);
+  const [selectedMemoBooking, setSelectedMemoBooking] = useState<Booking | null>(null);
 
   // Compute eligible onwards count
   const eligibleOnwardsCount = customers.filter(c => checkRefillEligibility(c.lastRefillDate).isEligible).length;
@@ -103,7 +104,7 @@ export const Customers: React.FC = () => {
     a.click();
   };
 
-  const memoBooking = createdMemoBookingId ? bookings.find(b => b.id === createdMemoBookingId) : null;
+
 
   return (
     <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
@@ -386,9 +387,41 @@ export const Customers: React.FC = () => {
                         </a>
 
                         <button
+                          onClick={() => {
+                            const b = bookings.find(x => x.customerId === customer.id || x.consumerNo === customer.consumerNo);
+                            if (b) {
+                              setSelectedMemoBooking(b);
+                            } else {
+                              const newMockMemo: Booking = {
+                                id: `booking-${Date.now()}`,
+                                bookingNo: `LPG-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+                                consumerNo: customer.consumerNo,
+                                customerName: customer.name,
+                                customerId: customer.id,
+                                bookingDate: customer.lastRefillDate || new Date().toISOString().split('T')[0],
+                                amount: (customer.cylinderType === '19kg' ? settings.refillPrice19kg : settings.refillPrice14kg) || 853.50,
+                                status: 'delivered',
+                                paymentStatus: 'paid',
+                                scheme: customer.scheme || 'general',
+                                cylinderType: customer.cylinderType || '14.2kg',
+                                quantity: 1,
+                                address: customer.address,
+                                phone: customer.phone,
+                                cashMemoNo: `CM-2026-${Math.floor(1000 + Math.random() * 9000)}`
+                              };
+                              setSelectedMemoBooking(newMockMemo);
+                            }
+                          }}
+                          title="Print Refill Cash Memo"
+                          className="p-1.5 bg-brand-500/20 hover:bg-brand-500/30 text-brand-400 rounded-lg border border-brand-500/30 transition-colors inline-flex items-center cursor-pointer"
+                        >
+                          <Printer className="w-4 h-4 text-brand-400" />
+                        </button>
+
+                        <button
                           onClick={() => navigate(`/customers/${customer.id}`)}
                           title="View Full Profile"
-                          className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors inline-flex items-center"
+                          className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors inline-flex items-center cursor-pointer"
                         >
                           <Eye className="w-4 h-4 text-brand-400" />
                         </button>
@@ -440,16 +473,17 @@ export const Customers: React.FC = () => {
           preselectedCustomerId={quickBookingCustomerId}
           onClose={() => setQuickBookingCustomerId(null)}
           onSuccess={(bId) => {
-            setCreatedMemoBookingId(bId);
+            const b = bookings.find(x => x.id === bId);
+            if (b) setSelectedMemoBooking(b);
           }}
         />
       )}
 
-      {/* Cash Memo Modal after quick booking */}
-      {memoBooking && (
+      {/* Cash Memo Modal */}
+      {selectedMemoBooking && (
         <CashMemoModal
-          booking={memoBooking}
-          onClose={() => setCreatedMemoBookingId(null)}
+          booking={selectedMemoBooking}
+          onClose={() => setSelectedMemoBooking(null)}
         />
       )}
 

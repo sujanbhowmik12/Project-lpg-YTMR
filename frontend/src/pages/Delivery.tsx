@@ -7,13 +7,17 @@ import {
   MapPin, 
   Phone, 
   Navigation, 
-  AlertTriangle 
+  AlertTriangle,
+  Printer
 } from 'lucide-react';
 import { useLPG } from '../context/LPGContext';
+import { CashMemoModal } from '../components/CashMemoModal';
+import { Booking } from '../types';
 
 export const Delivery: React.FC = () => {
-  const { deliveries, employees, updateDeliveryStatus } = useLPG();
+  const { deliveries, employees, bookings, updateDeliveryStatus } = useLPG();
   const [selectedBoyFilter, setSelectedBoyFilter] = useState<string>('all');
+  const [selectedMemoBooking, setSelectedMemoBooking] = useState<Booking | null>(null);
 
   const deliveryBoys = employees.filter(e => e.role === 'delivery_boy');
 
@@ -126,12 +130,12 @@ export const Delivery: React.FC = () => {
                 {del.notes && <p className="text-[10px] text-amber-400 italic">Note: {del.notes}</p>}
               </div>
 
-              {/* Status Change Buttons */}
+              {/* Status Change & Cash Memo Buttons */}
               <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-2">
                 {del.status === 'assigned' && (
                   <button
                     onClick={() => updateDeliveryStatus(del.id, 'out_for_delivery')}
-                    className="w-full py-1.5 bg-sky-600 hover:bg-sky-500 text-white font-bold text-[11px] rounded-lg transition-colors flex items-center justify-center gap-1"
+                    className="flex-1 py-1.5 bg-sky-600 hover:bg-sky-500 text-white font-bold text-[11px] rounded-lg transition-colors flex items-center justify-center gap-1 cursor-pointer"
                   >
                     <Truck className="w-3.5 h-3.5" /> Start Dispatch
                   </button>
@@ -140,23 +144,63 @@ export const Delivery: React.FC = () => {
                 {del.status === 'out_for_delivery' && (
                   <button
                     onClick={() => updateDeliveryStatus(del.id, 'delivered')}
-                    className="w-full py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg transition-colors flex items-center justify-center gap-1"
+                    className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg transition-colors flex items-center justify-center gap-1 cursor-pointer"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" /> Mark Delivered
                   </button>
                 )}
 
                 {del.status === 'delivered' && (
-                  <div className="w-full py-1 bg-emerald-500/10 text-emerald-400 text-center text-[10px] font-bold rounded-lg border border-emerald-500/20">
+                  <div className="flex-1 py-1 bg-emerald-500/10 text-emerald-400 text-center text-[10px] font-bold rounded-lg border border-emerald-500/20">
                     Delivered on {del.deliveredAt || 'Today'}
                   </div>
                 )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const b = bookings.find(x => x.bookingNo === del.bookingNo);
+                    if (b) {
+                      setSelectedMemoBooking(b);
+                    } else {
+                      setSelectedMemoBooking({
+                        id: del.id,
+                        bookingNo: del.bookingNo,
+                        consumerNo: `IND-${del.id}`,
+                        customerName: del.customerName,
+                        customerId: 'cust-1',
+                        bookingDate: new Date().toISOString().split('T')[0],
+                        amount: 853.50,
+                        status: del.status === 'delivered' ? 'delivered' : 'pending',
+                        paymentStatus: 'paid',
+                        scheme: 'general',
+                        cylinderType: '14.2kg',
+                        quantity: 1,
+                        address: del.address,
+                        phone: del.phone,
+                        cashMemoNo: `CM-2026-${Math.floor(1000 + Math.random() * 9000)}`
+                      });
+                    }
+                  }}
+                  title="Print Cash Memo"
+                  className="px-2.5 py-1.5 bg-brand-500/20 hover:bg-brand-500/30 text-brand-400 font-bold text-[11px] rounded-lg border border-brand-500/30 transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
+                >
+                  <Printer className="w-3.5 h-3.5" /> Memo
+                </button>
               </div>
 
             </div>
           ))}
         </div>
       </div>
+
+      {/* Cash Memo Modal */}
+      {selectedMemoBooking && (
+        <CashMemoModal
+          booking={selectedMemoBooking}
+          onClose={() => setSelectedMemoBooking(null)}
+        />
+      )}
 
     </div>
   );

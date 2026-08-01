@@ -12,14 +12,17 @@ import {
   FileText,
   FileCheck
 } from 'lucide-react';
+import { CashMemoModal } from '../components/CashMemoModal';
 import { useLPG } from '../context/LPGContext';
+import { Customer, Booking } from '../types';
 
 export const CustomerDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { customers, bookings, settings, checkRefillEligibility } = useLPG();
 
-  const customer = customers.find(c => c.id === id);
+  const customer = customers.find((c: Customer) => c.id === id);
+  const [selectedMemoBooking, setSelectedMemoBooking] = useState<Booking | null>(null);
 
   const [uploadedDocs, setUploadedDocs] = useState({
     aadhaar: true,
@@ -38,7 +41,7 @@ export const CustomerDetails: React.FC = () => {
     );
   }
 
-  const customerBookings = bookings.filter(b => b.customerId === customer.id || b.consumerNo === customer.consumerNo);
+  const customerBookings = bookings.filter((b: Booking) => b.customerId === customer.id || b.consumerNo === customer.consumerNo);
   const eligibility = checkRefillEligibility(customer.lastRefillDate);
 
   const handlePrintProfile = () => {
@@ -188,20 +191,38 @@ export const CustomerDetails: React.FC = () => {
                       <th className="p-3">Amount</th>
                       <th className="p-3">Payment</th>
                       <th className="p-3">Delivery Status</th>
+                      <th className="p-3 text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
-                    {customerBookings.map(b => (
+                    {customerBookings.map((b: Booking) => (
                       <tr key={b.id}>
                         <td className="p-3 font-mono font-bold text-brand-400">{b.bookingNo}</td>
                         <td className="p-3 font-mono">{b.bookingDate}</td>
-                        <td className="p-3 font-mono text-slate-300">{b.cashMemoNo || 'CM-2026-9901'}</td>
+                        <td className="p-3 font-mono text-slate-300">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedMemoBooking(b)}
+                            className="text-brand-400 hover:underline font-bold hover:text-brand-300 cursor-pointer"
+                          >
+                            {b.cashMemoNo || 'CM-2026-9901'}
+                          </button>
+                        </td>
                         <td className="p-3 font-bold text-emerald-400">₹{b.amount.toFixed(2)}</td>
                         <td className="p-3 uppercase font-semibold text-slate-300">{b.paymentStatus}</td>
                         <td className="p-3">
                           <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-400">
                             {b.status}
                           </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedMemoBooking(b)}
+                            className="px-2.5 py-1 bg-brand-500/20 hover:bg-brand-500/30 text-brand-400 text-[11px] font-semibold rounded-lg border border-brand-500/30 transition-colors inline-flex items-center gap-1 cursor-pointer"
+                          >
+                            <Printer className="w-3.5 h-3.5" /> Memo
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -214,6 +235,14 @@ export const CustomerDetails: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Cash Memo Modal */}
+      {selectedMemoBooking && (
+        <CashMemoModal
+          booking={selectedMemoBooking}
+          onClose={() => setSelectedMemoBooking(null)}
+        />
+      )}
 
     </div>
   );
