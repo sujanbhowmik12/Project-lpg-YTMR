@@ -4,14 +4,39 @@
 
 @layer base {
   body {
-    @apply bg-[#F4F6F8] text-slate-800 font-sans antialiased selection:bg-brand-500 selection:text-white;
+    @apply bg-neptune-950 text-slate-100 font-sans antialiased selection:bg-coral-500 selection:text-white;
   }
 }
 
-/* Custom Card & Glass Utilities */
-.card-white {
-  @apply bg-white border border-slate-200/80 rounded-3xl shadow-card transition-all duration-200 hover:shadow-card-hover;
+/* Custom Palette Utility Gradients & Badges */
+.bg-palette-card {
+  background-color: #16242B;
+  border-color: #2F4954;
 }
+
+.text-rose-custom { color: #E3A58A; }
+.bg-rose-custom { background-color: #E3A58A; }
+.border-rose-custom { border-color: #E3A58A; }
+
+.text-coral-custom { color: #E9633E; }
+.bg-coral-custom { background-color: #E9633E; }
+.border-coral-custom { border-color: #E9633E; }
+
+.text-sunbeam-custom { color: #EAAA42; }
+.bg-sunbeam-custom { background-color: #EAAA42; }
+.border-sunbeam-custom { border-color: #EAAA42; }
+
+.text-melon-custom { color: #A0AF72; }
+.bg-melon-custom { background-color: #A0AF72; }
+.border-melon-custom { border-color: #A0AF72; }
+
+.text-seafoam-custom { color: #AAC1AD; }
+.bg-seafoam-custom { background-color: #AAC1AD; }
+.border-seafoam-custom { border-color: #AAC1AD; }
+
+.text-neptune-custom { color: #537987; }
+.bg-neptune-custom { background-color: #537987; }
+.border-neptune-custom { border-color: #537987; }
 
 /* Page Setup for Single Page PDF Export */
 @page {
@@ -77,6 +102,10 @@
   #printable-memo th, 
   #printable-memo strong {
     color: #0f172a !important;
+  }
+
+  #printable-memo .text-orange-600 {
+    color: #E9633E !important;
   }
 
   #printable-memo table, #printable-memo th, #printable-memo td {
