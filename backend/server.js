@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// In-Memory Database Store initialized with initial agency data
+// In-Memory Database Store initialized with 38 real agency customers from ledger document
 const db = {
   agency: {
     agencyName: "YTMR Indane Gas Agency",
@@ -22,41 +22,53 @@ const db = {
     subsidyAmount: 200.00,
   },
   customers: [
-    {
-      id: "cust-1",
-      consumerNo: "IND-804912",
-      svNumber: "SV-2021-9941",
-      name: "Rajesh Kumar Sharma",
-      phone: "9812345670",
-      address: "H.No. 124, Block C, Green Valley Colony",
-      area: "Green Valley",
-      scheme: "general",
-      cylinderType: "14.2kg",
-      totalBookings: 14,
-      lastRefillDate: "2026-07-10",
-    },
-    {
-      id: "cust-2",
-      consumerNo: "IND-804913",
-      svNumber: "SV-PMUY-4012",
-      name: "Sunita Devi",
-      phone: "9876512340",
-      address: "Qtr 18, PMUY Enclave, Rampur Village",
-      area: "Rampur Village",
-      scheme: "ujjwala",
-      cylinderType: "14.2kg",
-      totalBookings: 9,
-      lastRefillDate: "2026-07-26",
-    }
+    { id: "cust-215", consumerNo: "7044952922", svNumber: "SV-2025-0215", lpgId: "7000000044952922", name: "SARASWATI MANNA", phone: "9091406446", address: "RAIPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O HARIPADA MANNA", scheme: "ujjwala", cylinderType: "14.2kg", area: "RAIPUR", totalBookings: 12, lastRefillDate: "2025-03-04" },
+    { id: "cust-216", consumerNo: "704967454", svNumber: "SV-2024-0216", lpgId: "7000000044967454", name: "LAKSHI PAL", phone: "9593463519", address: "RAIPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O MADAN PAL", scheme: "ujjwala", cylinderType: "14.2kg", area: "RAIPUR", totalBookings: 8, lastRefillDate: "2024-12-27" },
+    { id: "cust-217", consumerNo: "CKS210320", svNumber: "CKS210320", lpgId: "7000000010192597", name: "SAMIT KUMAR ROY", phone: "8597644021", address: "SRIRAMPUR AKALPUOSH O, WB - 721156", careOf: "S/O LT. ABHIBHUSON ROY", scheme: "general", cylinderType: "14.2kg", area: "SRIRAMPUR", totalBookings: 15, lastRefillDate: "2024-11-03" },
+    { id: "cust-218", consumerNo: "7043143767", svNumber: "SV-2024-0218", lpgId: "7000000043143767", name: "SANDHYA SAMANTA", phone: "8972606840", address: "BHAWANIPUR P.O PATNA 6, DEBRA, WB - 721211", careOf: "W/O SHAKTI SAMANTA", scheme: "ujjwala", cylinderType: "14.2kg", area: "BHAWANIPUR", totalBookings: 10, lastRefillDate: "2024-11-02" },
+    { id: "cust-219", consumerNo: "7043144216", svNumber: "SV-2024-0219", lpgId: "7000000043144216", name: "APARNA DOLAI", phone: "8593619441", address: "BHAWANIPUR P.O PATNA 6, DEBRA, WB - 721211", careOf: "W/O SHAKTI DOLAI", scheme: "ujjwala", cylinderType: "14.2kg", area: "BHAWANIPUR", totalBookings: 7, lastRefillDate: "2024-11-02" },
+    { id: "cust-220", consumerNo: "7043147244", svNumber: "SV-2024-0220", lpgId: "7000000043147244", name: "SANDHYA RANI NAYEK", phone: "8515866965", address: "PATNA P.O PATNA BAZAR 6, DEBRA, WB - 721126", careOf: "W/O NANDA NAYEK", scheme: "general", cylinderType: "14.2kg", area: "PATNA", totalBookings: 11, lastRefillDate: "2024-11-02" },
+    { id: "cust-221", consumerNo: "7048150099", svNumber: "SV-2024-0221", lpgId: "7000000048150099", name: "MONIMALA BHUNIA", phone: "9002120640", address: "BHANGABANDH P.O BHAWANIPUR 6, DEBRA, WB - 721211", careOf: "W/O RATAN BHUNIA", scheme: "general", cylinderType: "14.2kg", area: "BHANGABANDH", totalBookings: 6, lastRefillDate: "2024-11-02" },
+    { id: "cust-222", consumerNo: "7048474711", svNumber: "SV-2024-0222", lpgId: "7000000048474711", name: "JASHODA MUDI", phone: "7586808180", address: "SINGARGAR P.O SINGARGAR 6, DEBRA, WB - 721126", careOf: "W/O KHOKAN MUDI", scheme: "ujjwala", cylinderType: "14.2kg", area: "SINGARGAR", totalBookings: 9, lastRefillDate: "2024-11-02" },
+    { id: "cust-223", consumerNo: "704954194", svNumber: "SV-2024-0223", lpgId: "700000004954194", name: "MASUDAN BIBI", phone: "9775020952", address: "SRIRAMPUR P.O AKALPOUSH 6, KESHPOUR, WB - 721156", careOf: "W/O SEKH ALIMUDDIN", scheme: "ujjwala", cylinderType: "14.2kg", area: "SRIRAMPUR", totalBookings: 14, lastRefillDate: "2024-11-02" },
+    { id: "cust-224", consumerNo: "704937425", svNumber: "SV-2024-0224", lpgId: "700000004937425", name: "ANIMA DOLAI", phone: "9635360821", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721126", careOf: "W/O ASIT DOLAI", scheme: "general", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 13, lastRefillDate: "2024-11-02" },
+    { id: "cust-225", consumerNo: "704954591", svNumber: "SV-2024-0225", lpgId: "700000004954591", name: "JOSNAMA MONDAL", phone: "8674342156", address: "RAIPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O AJOY MONDAL", scheme: "general", cylinderType: "14.2kg", area: "RAIPUR", totalBookings: 11, lastRefillDate: "2024-11-02" },
+    { id: "cust-226", consumerNo: "704954761", svNumber: "SV-2024-0226", lpgId: "700000004954761", name: "SUKHI HEMBRAM", phone: "8436538465", address: "RAIPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O NANDA HEMBRAM", scheme: "ujjwala", cylinderType: "14.2kg", area: "RAIPUR", totalBookings: 9, lastRefillDate: "2024-11-02" },
+    { id: "cust-227", consumerNo: "704963074", svNumber: "SV-2024-0227", lpgId: "700000004963074", name: "CHANDANA MALLIK", phone: "9735758333", address: "RAIPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O ANANTA MALLIK", scheme: "general", cylinderType: "14.2kg", area: "RAIPUR", totalBookings: 12, lastRefillDate: "2024-11-02" },
+    { id: "cust-228", consumerNo: "704893461", svNumber: "SV-2024-0228", lpgId: "700000004893461", name: "BARNALI CHAKRABORTY", phone: "9635322263", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O NEPAL CHAKRABORTY", scheme: "general", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 16, lastRefillDate: "2024-11-02" },
+    { id: "cust-229", consumerNo: "704895182", svNumber: "SV-2024-0229", lpgId: "700000004895182", name: "BINAPANI SAMANTA", phone: "9409137513", address: "MAGRA P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O SHITAL SAMANTA", scheme: "ujjwala", cylinderType: "14.2kg", area: "MAGRA", totalBookings: 7, lastRefillDate: "2024-11-02" },
+    { id: "cust-230", consumerNo: "704490432", svNumber: "SV-2024-0230", lpgId: "700000004490432", name: "BRINDA DOLAI", phone: "7502906273", address: "GOT GERYA P.O HALKAS, KESHPOUR, WB - 721150", careOf: "W/O GOBINDA DOLAI", scheme: "general", cylinderType: "14.2kg", area: "GOT GERYA", totalBookings: 10, lastRefillDate: "2024-11-02" },
+    { id: "cust-231", consumerNo: "704899874", svNumber: "SV-2024-0231", lpgId: "700000004899874", name: "ASIMA GHATA", phone: "9735716046", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O ANNADA GHATA", scheme: "ujjwala", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 14, lastRefillDate: "2024-11-02" },
+    { id: "cust-232", consumerNo: "704502199", svNumber: "SV-2024-0232", lpgId: "700000004502199", name: "JOSHNA DOLAI", phone: "9800144667", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O HARIPADA DOLAI", scheme: "ujjwala", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 11, lastRefillDate: "2024-11-02" },
+    { id: "cust-233", consumerNo: "7045023906", svNumber: "SV-2024-0233", lpgId: "7000000045023906", name: "LATA RANI BARDOLAI", phone: "9635286940", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O AMULYA BARDOLAI", scheme: "general", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 9, lastRefillDate: "2024-11-02" },
+    { id: "cust-234", consumerNo: "7045026274", svNumber: "SV-2024-0234", lpgId: "7000000045026274", name: "SABITA DHARA", phone: "9933563962", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O BISWAJIT DHARA", scheme: "general", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 15, lastRefillDate: "2024-11-02" },
+    { id: "cust-235", consumerNo: "7045036583", svNumber: "SV-2024-0235", lpgId: "7000000045036583", name: "MITA GIRI", phone: "9547961310", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O SANJAY GIRI", scheme: "ujjwala", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 8, lastRefillDate: "2024-11-02" },
+    { id: "cust-236", consumerNo: "7048516793", svNumber: "SV-2024-0236", lpgId: "7000000048516793", name: "MANJU GHANTI", phone: "9733990066", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O AJAY GHANTI", scheme: "general", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 13, lastRefillDate: "2024-11-02" },
+    { id: "cust-237", consumerNo: "7048506966", svNumber: "SV-2024-0237", lpgId: "7000000048506966", name: "KALPANA GHANTI", phone: "9002556568", address: "GOPINATHPUR P.O MAGRA S, DEBRA, WB - 721156", careOf: "W/O BISHNUPADA GHANTI", scheme: "ujjwala", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 10, lastRefillDate: "2024-11-02" },
+    { id: "cust-238", consumerNo: "7048516035", svNumber: "SV-2024-0238", lpgId: "7000000048516035", name: "LAKSHMI SINGH", phone: "7318822597", address: "BAR RADHANAGAR P.O PATNA BAZAR 6, DEBRA, WB - 721156", careOf: "W/O TUPAI SINGH", scheme: "general", cylinderType: "14.2kg", area: "BAR RADHANAGAR", totalBookings: 7, lastRefillDate: "2024-11-02" },
+    { id: "cust-239", consumerNo: "7091258170", svNumber: "SV-2024-0239", lpgId: "7000000091258170", name: "SHEFALI KOTAL", phone: "8670776902", address: "PASCHIM DWARKHOLA P.O PATNABAZAR 6, WB - 721156", careOf: "W/O SACHIDAN KOTAL", scheme: "ujjwala", cylinderType: "14.2kg", area: "PASCHIM DWARKHOLA", totalBookings: 12, lastRefillDate: "2024-11-02" },
+    { id: "cust-240", consumerNo: "70450400535", svNumber: "SV-2024-0240", lpgId: "7000000050400535", name: "CHANDANA SHELL", phone: "8927860923", address: "PATNA P.O PATNABAZAR 6, KESHPOUR, WB - 721156", careOf: "W/O LAKSHMIKANTA SHELL", scheme: "general", cylinderType: "14.2kg", area: "PATNA", totalBookings: 14, lastRefillDate: "2024-08-06" },
+    { id: "cust-241", consumerNo: "704497068", svNumber: "SV-2024-0241", lpgId: "700000004497068", name: "BASANTI MAJI", phone: "8796423322", address: "RADHABALLABHPUR YO-BOULASINI 5C, KESHPOUR, WB - 721156", careOf: "W/O HARASHITAN MAJI", scheme: "ujjwala", cylinderType: "14.2kg", area: "RADHABALLABHPUR", totalBookings: 9, lastRefillDate: "2024-08-26" },
+    { id: "cust-242", consumerNo: "7045022700", svNumber: "SV-2024-0242", lpgId: "7000000045022700", name: "SARASWATI DOLAI", phone: "9735758333", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O GOUTAM DOLAI", scheme: "general", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 11, lastRefillDate: "2024-08-26" },
+    { id: "cust-243", consumerNo: "7044983531", svNumber: "SV-2024-0243", lpgId: "7000000044983531", name: "SANDHYA DOLAI", phone: "7504041859", address: "CHAND KHALI P.O MAGRA O, KESHPOUR, WB - 721156", careOf: "W/O ANIL DOLAI", scheme: "general", cylinderType: "14.2kg", area: "CHAND KHALI", totalBookings: 8, lastRefillDate: "2024-08-26" },
+    { id: "cust-244", consumerNo: "704494009", svNumber: "SV-2024-0244", lpgId: "700000004494009", name: "MILAN DOLAI", phone: "7504041859", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "W/O PHURU DOLAI", scheme: "ujjwala", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 13, lastRefillDate: "2024-03-24" },
+    { id: "cust-245", consumerNo: "CK9340249", svNumber: "CK9340249", lpgId: "700000001259523", name: "NIRMALA GIRI", phone: "7504041859", address: "GOPINATHPUR P.O MAGRA S, KESHPOUR, WB - 721126", careOf: "W/O PRABHASH GIRI", scheme: "general", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 10, lastRefillDate: "2024-03-24" },
+    { id: "cust-246", consumerNo: "704501003", svNumber: "SV-2023-0246", lpgId: "700000004501003", name: "BANDANA SINGH", phone: "9964791391", address: "GOPINATHPUR P.O MAGRA 0, KESHPOUR, WB - 721156", careOf: "W/O MANIK SINGH", scheme: "general", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 7, lastRefillDate: "2023-11-29" },
+    { id: "cust-247", consumerNo: "71031549444", svNumber: "SV-2023-0247", lpgId: "7000000031549444", name: "KARTIK BARADOLAI", phone: "9964791391", address: "RADHANAGAR PATNI, DEBRA PASCHIM MEDINIPUR, WB - 721156", careOf: "S/O NAKUL BARADOLAI", scheme: "general", cylinderType: "14.2kg", area: "KYC", totalBookings: 14, lastRefillDate: "2023-11-29" },
+    { id: "cust-248", consumerNo: "704501003-B", svNumber: "SV-2023-0248", lpgId: "70000000501003", name: "BELA RANI CHAKRABORTY", phone: "9339625446", address: "BHAGABANPUR, PO-BHAGABANPUR 5C, KESHPOUR, WB - 721156", careOf: "W/O DHURJATI CHAKRABORTY", scheme: "general", cylinderType: "14.2kg", area: "BHAGABANPUR", totalBookings: 9, lastRefillDate: "2023-03-22" },
+    { id: "cust-249", consumerNo: "7051002738", svNumber: "SV-2023-0249", lpgId: "7000000051002738", name: "MANIK MANDAL", phone: "9339625446", address: "PASCHIM DWARKHOLA, P.O PATNABAZAR O, WB - 721156", careOf: "S/O NIMAI CHANDRA MANDAL", scheme: "general", cylinderType: "14.2kg", area: "PASCHIM DWARKHOLA", totalBookings: 11, lastRefillDate: "2023-03-22" },
+    { id: "cust-250", consumerNo: "7058271542", svNumber: "SV-2022-0250", lpgId: "7000000058271542", name: "ASHIMA SINGHA", phone: "9339625446", address: "GOPINATHPUR, P.O MAGRAS, KESHPOUR, WB - 721156", careOf: "W/O TURANIJAN BIKASH SINGHA", scheme: "ujjwala", cylinderType: "14.2kg", area: "GOPINATHPUR", totalBookings: 8, lastRefillDate: "2022-12-27" },
+    { id: "cust-251", consumerNo: "7054991736", svNumber: "SV-2020-0251", lpgId: "7000000054991736", name: "BISHNUPRIYA KHAMRAI", phone: "7718536922", address: "BAR RADHANAGAR, P.O PATNA BAZAR 6, DEBRA, WB - 721156", careOf: "W/O LAKSHMINARAYAN KHAMRAI", scheme: "general", cylinderType: "14.2kg", area: "BAR RADHANAGAR", totalBookings: 16, lastRefillDate: "2020-10-12" },
+    { id: "cust-252", consumerNo: "7045027210", svNumber: "SV-2020-0252", lpgId: "7000000045027210", name: "GANESH MANNA", phone: "7479395706", address: "RAIPUR, P.O MAGRA S, KESHPOUR, WB - 721156", careOf: "S/O SITARAM MANNA", scheme: "general", cylinderType: "14.2kg", area: "RAIPUR", totalBookings: 14, lastRefillDate: "2020-08-24" }
   ],
   bookings: [
     {
       id: "book-101",
       bookingNo: "LPG-2026-9041",
-      consumerNo: "IND-804912",
-      customerName: "Rajesh Kumar Sharma",
-      scheme: "general",
-      amount: 853.50,
+      consumerNo: "7044952922",
+      customerName: "SARASWATI MANNA",
+      scheme: "ujjwala",
+      amount: 653.50,
       status: "delivered",
       bookingDate: "2026-07-25"
     }
@@ -75,7 +87,7 @@ app.post('/api/auth/login', (req, res) => {
     token: "mock-jwt-token-lpg-agency",
     user: {
       id: "emp-1",
-      name: email.split('@')[0],
+      name: email ? email.split('@')[0] : "ADMIN",
       email: email,
       role: role || 'admin'
     }

@@ -25,18 +25,44 @@ const LPGContext = createContext<LPGContextType | undefined>(undefined);
 
 export const LPGProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [customers, setCustomers] = useState<Customer[]>(() => {
-    const saved = localStorage.getItem('lpg_customers');
-    return saved ? JSON.parse(saved) : initialCustomers;
+    const saved = localStorage.getItem('lpg_customers_v3_photo');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed.some(c => c.name.includes('SARASWATI MANNA'))) {
+          return parsed;
+        }
+      } catch (e) {
+        // fallback
+      }
+    }
+    localStorage.removeItem('lpg_customers');
+    localStorage.setItem('lpg_customers_v3_photo', JSON.stringify(initialCustomers));
+    return initialCustomers;
   });
 
   const [bookings, setBookings] = useState<Booking[]>(() => {
-    const saved = localStorage.getItem('lpg_bookings');
-    return saved ? JSON.parse(saved) : initialBookings;
+    const saved = localStorage.getItem('lpg_bookings_v3_photo');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    localStorage.removeItem('lpg_bookings');
+    localStorage.setItem('lpg_bookings_v3_photo', JSON.stringify(initialBookings));
+    return initialBookings;
   });
 
   const [deliveries, setDeliveries] = useState<Delivery[]>(() => {
-    const saved = localStorage.getItem('lpg_deliveries');
-    return saved ? JSON.parse(saved) : initialDeliveries;
+    const saved = localStorage.getItem('lpg_deliveries_v3_photo');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    localStorage.removeItem('lpg_deliveries');
+    localStorage.setItem('lpg_deliveries_v3_photo', JSON.stringify(initialDeliveries));
+    return initialDeliveries;
   });
 
   const [employees, setEmployees] = useState<Employee[]>(() => {
@@ -60,15 +86,15 @@ export const LPGProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   useEffect(() => {
-    localStorage.setItem('lpg_customers', JSON.stringify(customers));
+    localStorage.setItem('lpg_customers_v3_photo', JSON.stringify(customers));
   }, [customers]);
 
   useEffect(() => {
-    localStorage.setItem('lpg_bookings', JSON.stringify(bookings));
+    localStorage.setItem('lpg_bookings_v3_photo', JSON.stringify(bookings));
   }, [bookings]);
 
   useEffect(() => {
-    localStorage.setItem('lpg_deliveries', JSON.stringify(deliveries));
+    localStorage.setItem('lpg_deliveries_v3_photo', JSON.stringify(deliveries));
   }, [deliveries]);
 
   useEffect(() => {
