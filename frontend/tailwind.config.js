@@ -7,87 +7,48 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Custom 6-color Palette from user specification:
-        // ROSÉ: #E3A58A, CORAL: #E9633E, SUNBEAM: #EAAA42
-        // MELON: #A0AF72, SEAFOAM: #AAC1AD, NEPTUNE: #537987
-        rose: {
-          DEFAULT: '#E3A58A',
-          light: '#F2D3C7',
-          dark: '#C87F63',
-          500: '#E3A58A',
-        },
-        coral: {
-          DEFAULT: '#E9633E',
-          50: '#FDF3F0',
-          100: '#FCE4DD',
-          200: '#F8C4B7',
-          300: '#F49E8A',
-          400: '#EE7D60',
-          500: '#E9633E',
-          600: '#D24B27',
-          700: '#AA3517',
-          800: '#86280F',
-          900: '#6E210C',
-        },
-        sunbeam: {
-          DEFAULT: '#EAAA42',
-          light: '#F6D995',
-          dark: '#C78923',
-          500: '#EAAA42',
-        },
-        melon: {
-          DEFAULT: '#A0AF72',
-          light: '#C8D3A8',
-          dark: '#7A884E',
-          500: '#A0AF72',
-        },
-        seafoam: {
-          DEFAULT: '#AAC1AD',
-          light: '#D3E1D5',
-          dark: '#7E9C82',
-          500: '#AAC1AD',
-        },
-        neptune: {
-          DEFAULT: '#537987',
-          50: '#F2F6F7',
-          100: '#E2EBEF',
-          200: '#C7D8DF',
-          300: '#9FBECD',
-          400: '#759EB1',
-          500: '#537987',
-          600: '#3D5E6B',
-          700: '#2F4954',
-          800: '#22363F',
-          900: '#16242B',
-          950: '#0B1317',
-        },
+        // StaffCentral / Modern Light UI Palette tokens matching user screenshot:
         brand: {
-          50: '#FDF3F0',
-          100: '#FCE4DD',
-          200: '#F8C4B7',
-          300: '#F49E8A',
-          400: '#EE7D60',
-          500: '#E9633E', // Coral as primary brand color
-          600: '#D24B27',
-          700: '#AA3517',
-          800: '#86280F',
-          900: '#6E210C',
+          50: '#EBF3FF',
+          100: '#D6E7FF',
+          200: '#ADCFFF',
+          300: '#75B0FF',
+          400: '#3B8BFF',
+          500: '#0066FF', // Vibrant Electric Blue
+          600: '#0052CC',
+          700: '#003E99',
+          800: '#002B66',
+          900: '#001833',
         },
-        gasBlue: {
-          50: '#F2F6F7',
-          100: '#E2EBEF',
-          200: '#C7D8DF',
-          300: '#9FBECD',
-          400: '#759EB1',
-          500: '#537987', // Neptune slate teal
-          600: '#3D5E6B',
-          700: '#2F4954',
-          800: '#22363F',
-          900: '#16242B',
+        cardPink: {
+          DEFAULT: '#FF3875',
+          dark: '#E0265F',
+        },
+        cardGreen: {
+          DEFAULT: '#00C853',
+          dark: '#009E40',
+        },
+        cardBlue: {
+          DEFAULT: '#0066FF',
+          dark: '#0052CC',
+        },
+        cardCoral: {
+          DEFAULT: '#FF5722',
+          dark: '#E64A19',
+        },
+        surface: {
+          bg: '#F4F6F8',
+          card: '#FFFFFF',
+          sidebar: '#FAFAFC',
+          border: '#E2E8F0',
         }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        'card': '0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02)',
+        'card-hover': '0 10px 30px -4px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03)',
       }
     },
   },
