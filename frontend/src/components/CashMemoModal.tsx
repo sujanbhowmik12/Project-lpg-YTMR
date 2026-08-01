@@ -61,13 +61,22 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
         {/* PRINTABLE CASH MEMO CONTENT */}
         <div id="printable-memo" className="bg-white text-slate-900 p-6 rounded-xl font-sans text-xs space-y-4 shadow-inner border border-slate-300">
           
-          {/* Memo Header */}
-          <div className="text-center border-b-2 border-slate-900 pb-3">
-            <div className="flex items-center justify-center gap-1.5 text-orange-600 font-extrabold text-lg uppercase tracking-wider">
-              <span>🔥 {settings.oilCompany || 'Indane Gas'} LPG REFILL CASH MEMO</span>
+          {/* Memo Header with Official Website Logo */}
+          <div className="text-center border-b-2 border-slate-900 pb-3.5 space-y-2">
+            <div className="flex items-center justify-center gap-3">
+              <img 
+                src="/logoytmr.png" 
+                alt="YTMR LPG Logo" 
+                className="w-12 h-12 object-contain rounded-xl p-0.5 border border-slate-300 bg-white shadow-sm shrink-0" 
+              />
+              <div className="text-left">
+                <div className="flex items-center gap-1 text-orange-600 font-extrabold text-base sm:text-lg uppercase tracking-wider">
+                  <span>🔥 {settings.oilCompany || 'Indane Gas'} REFILL CASH MEMO</span>
+                </div>
+                <h3 className="font-black text-sm sm:text-base text-slate-900 leading-tight">{settings.agencyName}</h3>
+              </div>
             </div>
-            <h3 className="font-bold text-sm text-slate-900 mt-1">{settings.agencyName}</h3>
-            <p className="text-[11px] text-slate-600">Distributor Code: <strong>{settings.distributorCode}</strong> | GSTIN: 09AABCU9603R1ZM</p>
+            <p className="text-[11px] text-slate-600 font-medium">Distributor Code: <strong>{settings.distributorCode}</strong> | GSTIN: 09AABCU9603R1ZM</p>
             <p className="text-[10px] text-slate-500">{settings.address} | Ph: {settings.phone}</p>
           </div>
 

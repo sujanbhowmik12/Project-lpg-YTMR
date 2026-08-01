@@ -8,7 +8,7 @@
   }
 }
 
-/* Perfect Print & Save PDF Styles for Official LPG Cash Memos */
+/* Bulletproof Print & Save PDF Styles: Print ONLY the Cash Memo Invoice card with website logo */
 @media print {
   html, body {
     background: #ffffff !important;
@@ -19,31 +19,31 @@
     print-color-adjust: exact !important;
   }
 
-  /* Hide header, navigation, and modal backdrops during print */
-  header, aside, nav, .print\:hidden {
-    display: none !important;
+  /* Hide everything on website during print */
+  body * {
+    visibility: hidden !important;
   }
 
-  /* Position printable memo cleanly on white paper/PDF */
+  /* Make ONLY #printable-memo and its children visible */
+  #printable-memo, #printable-memo * {
+    visibility: visible !important;
+  }
+
+  /* Position printable memo at the top-left of the page */
   #printable-memo {
-    display: block !important;
     position: fixed !important;
-    left: 5% !important;
-    top: 20px !important;
-    width: 90% !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
     height: auto !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
     padding: 24px !important;
     background-color: #ffffff !important;
     color: #0f172a !important;
     box-shadow: none !important;
     border: 2px solid #0f172a !important;
     border-radius: 12px !important;
-    z-index: 999999 !important;
-  }
-
-  #printable-memo * {
-    visibility: visible !important;
+    z-index: 9999999 !important;
   }
 
   #printable-memo h3, 
