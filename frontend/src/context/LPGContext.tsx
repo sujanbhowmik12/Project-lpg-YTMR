@@ -25,19 +25,19 @@ const LPGContext = createContext<LPGContextType | undefined>(undefined);
 
 export const LPGProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [customers, setCustomers] = useState<Customer[]>(() => {
-    const saved = localStorage.getItem('lpg_customers_v3_photo');
+    const saved = localStorage.getItem('lpg_customers_v4_all_photos');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0 && parsed.some(c => c.name.includes('SARASWATI MANNA'))) {
+        if (Array.isArray(parsed) && parsed.length >= 50) {
           return parsed;
         }
       } catch (e) {
         // fallback
       }
     }
-    localStorage.removeItem('lpg_customers');
-    localStorage.setItem('lpg_customers_v3_photo', JSON.stringify(initialCustomers));
+    localStorage.removeItem('lpg_customers_v3_photo');
+    localStorage.setItem('lpg_customers_v4_all_photos', JSON.stringify(initialCustomers));
     return initialCustomers;
   });
 
@@ -86,7 +86,7 @@ export const LPGProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   useEffect(() => {
-    localStorage.setItem('lpg_customers_v3_photo', JSON.stringify(customers));
+    localStorage.setItem('lpg_customers_v4_all_photos', JSON.stringify(customers));
   }, [customers]);
 
   useEffect(() => {
