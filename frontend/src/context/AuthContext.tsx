@@ -36,7 +36,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return null;
     }
   });
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      return !localStorage.getItem('lpg_auth_user');
+    } catch (e) {
+      return true;
+    }
+  });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser: any) => {

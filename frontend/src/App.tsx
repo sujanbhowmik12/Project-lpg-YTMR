@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LPGProvider } from './context/LPGContext';
 import { Sidebar } from './components/Sidebar';
@@ -69,7 +69,7 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
 export function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AuthProvider>
         <LPGProvider>
           <Routes>
@@ -96,7 +96,7 @@ export function App() {
           </Routes>
         </LPGProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
