@@ -8,22 +8,78 @@
   }
 }
 
-/* Custom Print Styles for Official LPG Cash Memos and KYC Profiles */
+/* Perfect Print & Save PDF Styles for Official LPG Cash Memos */
 @media print {
-  body * {
-    visibility: hidden;
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
-  #printable-memo, #printable-memo * {
-    visibility: visible;
+
+  /* Hide header, navigation, and modal backdrops during print */
+  header, aside, nav, .print\:hidden {
+    display: none !important;
   }
+
+  /* Position printable memo cleanly on white paper/PDF */
   #printable-memo {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 20px;
+    display: block !important;
+    position: fixed !important;
+    left: 5% !important;
+    top: 20px !important;
+    width: 90% !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    padding: 24px !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
     box-shadow: none !important;
-    border: none !important;
+    border: 2px solid #0f172a !important;
+    border-radius: 12px !important;
+    z-index: 999999 !important;
+  }
+
+  #printable-memo * {
+    visibility: visible !important;
+  }
+
+  #printable-memo h3, 
+  #printable-memo p, 
+  #printable-memo span, 
+  #printable-memo td, 
+  #printable-memo th, 
+  #printable-memo strong {
+    color: #0f172a !important;
+  }
+
+  #printable-memo .text-orange-600 {
+    color: #ea580c !important;
+  }
+
+  #printable-memo .text-emerald-700, #printable-memo .text-emerald-800 {
+    color: #047857 !important;
+  }
+
+  #printable-memo .bg-slate-900 {
+    background-color: #0f172a !important;
+  }
+
+  #printable-memo .bg-slate-900 * {
+    color: #ffffff !important;
+  }
+
+  #printable-memo .text-emerald-400 {
+    color: #34d399 !important;
+  }
+
+  #printable-memo .bg-slate-50 {
+    background-color: #f8fafc !important;
+  }
+
+  #printable-memo table, #printable-memo th, #printable-memo td {
+    border-color: #cbd5e1 !important;
   }
 }

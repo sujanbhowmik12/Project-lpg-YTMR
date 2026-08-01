@@ -33,8 +33,8 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
   const safeSubsidy = settings.subsidyAmount || 200.00;
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative text-slate-100 flex flex-col max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:static print:bg-transparent print:p-0">
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative text-slate-100 flex flex-col max-h-[90vh] overflow-y-auto print:bg-transparent print:border-none print:shadow-none print:p-0 print:max-h-none print:overflow-visible">
         
         {/* Modal Controls */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4 print:hidden">
@@ -45,9 +45,9 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({ booking, onClose }
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-md cursor-pointer"
+              className="flex items-center gap-1.5 bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-600 hover:to-orange-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-lg cursor-pointer"
             >
-              <Printer className="w-4 h-4" /> Print Cash Memo
+              <Printer className="w-4 h-4" /> Save as PDF / Print Cash Memo
             </button>
             <button
               onClick={onClose}
