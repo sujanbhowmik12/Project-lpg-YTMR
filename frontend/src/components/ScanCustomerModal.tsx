@@ -106,34 +106,29 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
     }
   };
 
-  // Image Preprocessing Filter for Higher Contrast OCR Text Extraction
+  // Image Preprocessing Filter (Clean Scaling without Destructive Pixel Thresholding)
   const preprocessImage = (dataUrl: string): Promise<string> => {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
         const cvs = document.createElement('canvas');
-        cvs.width = img.width;
-        cvs.height = img.height;
+        // Scale to optimal OCR dimensions
+        const maxDim = 1800;
+        let scale = 1;
+        if (img.width > maxDim || img.height > maxDim) {
+          scale = Math.min(maxDim / img.width, maxDim / img.height);
+        }
+        cvs.width = Math.round(img.width * scale);
+        cvs.height = Math.round(img.height * scale);
         const ctx = cvs.getContext('2d');
         if (!ctx) {
           resolve(dataUrl);
           return;
         }
 
-        ctx.drawImage(img, 0, 0);
-        const imgData = ctx.getImageData(0, 0, cvs.width, cvs.height);
-        const d = imgData.data;
-
-        // Apply contrast & grayscale enhancement
-        for (let i = 0; i < d.length; i += 4) {
-          const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-          const highContrast = gray > 140 ? 255 : (gray < 80 ? 0 : gray);
-          d[i] = highContrast;
-          d[i + 1] = highContrast;
-          d[i + 2] = highContrast;
-        }
-
-        ctx.putImageData(imgData, 0, 0);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
         resolve(cvs.toDataURL('image/png'));
       };
       img.onerror = () => resolve(dataUrl);
@@ -141,15 +136,15 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
     });
   };
 
-  // Optical Character Recognition Algorithm with 5-second Safety Timeout
+  // Optical Character Recognition Algorithm with 15-second Timeout
   const processImageOCR = async (rawImage: string) => {
     setScanning(true);
     setScanProgress(10);
     setStatusMessage("Scanning & analyzing document image...");
 
-    // Create 5-second safety timeout promise
+    // Create 15-second safety timeout promise
     const timeoutPromise = new Promise<null>((resolve) => {
-      setTimeout(() => resolve(null), 5000);
+      setTimeout(() => resolve(null), 15000);
     });
 
     try {
@@ -169,7 +164,7 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
         }
       );
 
-      // Race between Tesseract and 5-second timeout
+      // Race between Tesseract and 15-second timeout
       const result: any = await Promise.race([ocrPromise, timeoutPromise]);
 
       if (result && result.data && result.data.text) {
@@ -177,7 +172,6 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
         setRawOcrText(recognizedText);
         parseExtractedText(recognizedText);
       } else {
-        // Timeout reached or empty text -> fallback gracefully
         fallbackParsing(rawImage);
       }
     } catch (err: any) {
@@ -199,20 +193,26 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
     const upperText = text.toUpperCase();
 
     // 1. Phone number (10 digits starting with 6,7,8,9)
-    const phoneMatch = text.match(/\b[6-9]\d{9}\b/);
-    const phone = phoneMatch ? phoneMatch[0] : '';
+    const phoneMatches = text.match(/\b[6-9]\d{9}\b/g) || [];
+    const phone = phoneMatches.length > 0 ? phoneMatches[0] : '';
 
     // 2. 16-digit LPG ID (starts with 7000...)
     const lpgIdMatch = text.match(/\b7000\d{12}\b/) || text.match(/\b\d{16}\b/);
     const lpgId = lpgIdMatch ? lpgIdMatch[0] : '';
 
-    // 3. Consumer Number (starts with 70... or CKS... or 10-digit number)
-    const consumerNoMatch = text.match(/\b70\d{8,10}\b/) || text.match(/\b(IND|BGT|CK|CKS)\d{5,10}\b/i) || text.match(/\b\d{9,12}\b/);
-    const consumerNo = consumerNoMatch ? consumerNoMatch[0] : (lpgId ? lpgId.slice(-10) : '');
+    // 3. Consumer Number (starts with 70..., CKS..., or labeled "CONSUMER NO: ...")
+    let consumerNo = '';
+    const consumerNoLabelMatch = text.match(/(CONSUMER\s*NO|CONSUMER\s*NUM|CONS\s*NO)[:\.\s]*([A-Z0-9]{6,14})/i);
+    if (consumerNoLabelMatch) {
+      consumerNo = consumerNoLabelMatch[2].trim();
+    } else {
+      const consumerNoMatch = text.match(/\b70\d{8,10}\b/) || text.match(/\b(IND|BGT|CK|CKS)\d{5,10}\b/i) || text.match(/\b\d{9,12}\b/);
+      consumerNo = consumerNoMatch ? consumerNoMatch[0] : (lpgId ? lpgId.slice(-10) : '');
+    }
 
     // 4. SV Number
     const svMatch = text.match(/\b(SV|CKS)[-\s]?\d{4,10}\b/i);
-    const svNumber = svMatch ? svMatch[0] : (consumerNo ? `SV-${consumerNo}` : '');
+    const svNumber = svMatch ? svMatch[0] : '';
 
     // 5. Scheme
     let scheme: SchemeType = 'general';
@@ -227,7 +227,7 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
     if (upperText.includes('BHARAT')) oilCompany = 'Bharat Gas';
     if (upperText.includes('HP GAS') || upperText.includes('HINDUSTAN')) oilCompany = 'HP Gas';
 
-    // 7. Care Of (W/O, S/O, C/O)
+    // 7. Care Of (W/O, S/O, C/O, D/O)
     let careOf = '';
     const careOfMatch = text.match(/(W\/O|S\/O|C\/O|D\/O)[:\s]+([A-Z\s]+)/i);
     if (careOfMatch) {
@@ -236,14 +236,19 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
 
     // 8. Full Name
     let name = '';
-    const excludeWords = ['INDIAN', 'GAS', 'LPG', 'BHARAT', 'INDANE', 'HINDUSTAN', 'CONSUMER', 'NUMBER', 'ADDRESS', 'DATE', 'BILL', 'VOUCHER', 'WB019', 'KESHPUR', 'RAIPUR', 'PATNA', 'MAGRA'];
-    for (const line of lines) {
-      const cleanLine = line.replace(/[^A-Z\s]/gi, '').trim();
-      const words = cleanLine.split(/\s+/);
-      if (words.length >= 2 && words.length <= 4 && cleanLine.length >= 5) {
-        if (!excludeWords.some(w => cleanLine.toUpperCase().includes(w))) {
-          name = cleanLine.toUpperCase();
-          break;
+    const nameLabelMatch = text.match(/(NAME|CONSUMER NAME|CUSTOMER NAME)[:\.\s]+([A-Z\s]{3,30})/i);
+    if (nameLabelMatch) {
+      name = nameLabelMatch[2].replace(/[^A-Z\s]/gi, '').trim().toUpperCase();
+    } else {
+      const excludeWords = ['INDIAN', 'GAS', 'LPG', 'BHARAT', 'INDANE', 'HINDUSTAN', 'CONSUMER', 'NUMBER', 'ADDRESS', 'DATE', 'BILL', 'VOUCHER', 'WB019', 'KESHPUR', 'RAIPUR', 'PATNA', 'MAGRA'];
+      for (const line of lines) {
+        const cleanLine = line.replace(/[^A-Z\s]/gi, '').trim();
+        const words = cleanLine.split(/\s+/);
+        if (words.length >= 2 && words.length <= 4 && cleanLine.length >= 4) {
+          if (!excludeWords.some(w => cleanLine.toUpperCase().includes(w))) {
+            name = cleanLine.toUpperCase();
+            break;
+          }
         }
       }
     }
@@ -251,24 +256,22 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
     // 9. Address
     let address = '';
     const pinMatch = text.match(/\b7\d{5}\b/);
-    const addressLines = lines.filter(l => l.includes('P.O') || l.includes('VL:') || l.includes('BL:') || l.includes('WB') || l.includes('RAIPUR') || l.includes('PATNA') || l.includes('DEBRA') || l.includes('GOPINATHPUR'));
+    const addressLines = lines.filter(l => l.includes('P.O') || l.includes('VL:') || l.includes('BL:') || l.includes('WB') || l.includes('VILL') || l.includes('DIST') || l.includes('PIN'));
     if (addressLines.length > 0) {
       address = addressLines.join(', ').toUpperCase();
     } else if (pinMatch) {
-      address = `Paschim Medinipur, WB - ${pinMatch[0]}`;
-    } else {
-      address = "Magra S, Keshpur, Paschim Medinipur, WB - 721156";
+      address = `PIN: ${pinMatch[0]}`;
     }
 
     setExtractedData(prev => ({
       ...prev,
-      consumerNo: consumerNo || prev.consumerNo || `704${Math.floor(1000000 + Math.random() * 9000000)}`,
-      svNumber: svNumber || prev.svNumber || `SV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      lpgId: lpgId || prev.lpgId,
-      phone: phone || prev.phone || "98" + Math.floor(10000000 + Math.random() * 90000000),
-      name: name || prev.name || "SCANNED CONSUMER",
-      careOf: careOf || prev.careOf || "W/O CONSUMER",
-      address: address || prev.address,
+      consumerNo: consumerNo || prev.consumerNo || '',
+      svNumber: svNumber || prev.svNumber || '',
+      lpgId: lpgId || prev.lpgId || '',
+      phone: phone || prev.phone || '',
+      name: name || prev.name || '',
+      careOf: careOf || prev.careOf || '',
+      address: address || prev.address || '',
       scheme: scheme,
       oilCompany: oilCompany
     }));
@@ -277,12 +280,12 @@ export const ScanCustomerModal: React.FC<ScanCustomerModalProps> = ({ onClose, o
   const fallbackParsing = (image: string) => {
     setExtractedData(prev => ({
       ...prev,
-      consumerNo: `704${Math.floor(1000000 + Math.random() * 9000000)}`,
-      svNumber: `SV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      name: prev.name || "SCANNED CONSUMER",
-      phone: prev.phone || "98" + Math.floor(10000000 + Math.random() * 90000000),
-      address: prev.address || "Magra S, Keshpur, Paschim Medinipur, WB - 721156",
-      careOf: prev.careOf || "W/O CONSUMER",
+      consumerNo: prev.consumerNo || '',
+      svNumber: prev.svNumber || '',
+      name: prev.name || '',
+      phone: prev.phone || '',
+      address: prev.address || '',
+      careOf: prev.careOf || '',
       scheme: "general",
       oilCompany: "Indane Gas"
     }));
